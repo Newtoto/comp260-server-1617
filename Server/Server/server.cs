@@ -5,6 +5,7 @@ using System.Text;
 
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 
 namespace Server
 {
@@ -26,16 +27,17 @@ namespace Server
             {            
                 while (true)
                 {
-                    byte[] buffer = new byte[4096];
+                    // Receiving from client
+                    byte[] bufferReceive = new byte[4096];
 
                     try
                     {
-                        int result = newConnection.Receive(buffer);
+                        int result = newConnection.Receive(bufferReceive);
 
                         if (result > 0)
                         {
-                            ASCIIEncoding encoder = new ASCIIEncoding();
-                            String recdMsg = encoder.GetString(buffer, 0, result);
+                            ASCIIEncoding encoderSend = new ASCIIEncoding();
+                            String recdMsg = encoderSend.GetString(bufferReceive, 0, result);
 
                             Console.WriteLine("Received: " + recdMsg);
                         }
@@ -43,7 +45,27 @@ namespace Server
                     catch (System.Exception ex)
                     {
                         Console.WriteLine(ex);    	
-                    }                    
+                    }
+
+                    // Sending data to client
+
+                    String Msg = "Testing server to client message";
+                    ASCIIEncoding encoderReceive = new ASCIIEncoding();
+                    byte[] bufferSend = encoderReceive.GetBytes(Msg);
+
+                    try
+                    {
+                        Console.WriteLine(Msg);
+                        int bytesSent = newConnection.Send(bufferSend);
+                    }
+                    catch (System.Exception ex)
+                    {
+                        Console.WriteLine(ex);
+                    }
+
+                    // Reading string from server
+
+                    Thread.Sleep(1000);
                 }
             }
         }

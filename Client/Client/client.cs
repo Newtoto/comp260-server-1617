@@ -36,6 +36,7 @@ namespace Client
 
             while (true)
             {
+                // Writing string to server
                 String Msg = ID.ToString() + " testing, testing, 1,2,3";
                 ID++;
                 ASCIIEncoding encoder = new ASCIIEncoding();
@@ -50,7 +51,26 @@ namespace Client
                 {
                     Console.WriteLine(ex);	
                 }
-                
+
+                // Reading string from server
+                byte[] bufferReceive = new byte[4096];
+
+                try
+                {
+                    int result = s.Receive(bufferReceive);
+
+                    if (result > 0)
+                    {
+                        ASCIIEncoding encoderSend = new ASCIIEncoding();
+                        String recdMsg = encoderSend.GetString(bufferReceive, 0, result);
+
+                        Console.WriteLine("Received: " + recdMsg);
+                    }
+                }
+                catch (System.Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
 
                 Thread.Sleep(1000);
             }

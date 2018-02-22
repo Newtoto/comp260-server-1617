@@ -1,0 +1,5 @@
+C:\Users\Andy\Downloads\Lecture 03\02.threaded sockets\threaded csharp\Client\Client\bin\Debug\Client.exe
+C:\Users\Andy\Downloads\Lecture 03\02.threaded sockets\threaded csharp\Client\Client\bin\Debug\Client.pdb
+C:\Users\Andy\Downloads\Lecture 03\02.threaded sockets\threaded csharp\Client\Client\obj\x86\Debug\Client.csproj.CoreCompileInputs.cache
+C:\Users\Andy\Downloads\Lecture 03\02.threaded sockets\threaded csharp\Client\Client\obj\x86\Debug\Client.exe
+C:\Users\Andy\Downloads\Lecture 03\02.threaded sockets\threaded csharp\Client\Client\obj\x86\Debug\Client.pdb

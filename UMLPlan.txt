@@ -1,0 +1,26 @@
+
+- private
++ public
+# protected
+~ Package/Default
+
+
+Room
+_______________________________
+- roomID: string
+- primaryDescription: string
+- secondaryDescription: string
+- exits: string []
+_______________________________
++ readPrimaryDescription()
++ readSecondaryDescription()
+
+
+User
+_______________________________
++ userID: string
+- input: string
+_______________________________
+- sendPrivateMessage()
+- sendPublicMessage()
+

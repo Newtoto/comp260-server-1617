@@ -58,10 +58,9 @@ namespace Client
                 }
 
                 // Send to server
-
                 var entry = Console.ReadLine();
 
-                String Msg = ID.ToString() + entry;
+                String Msg = ID.ToString() + ":" + entry;
                 ID++;
                 ASCIIEncoding encoder = new ASCIIEncoding();
                 byte[] buffer = encoder.GetBytes(Msg);

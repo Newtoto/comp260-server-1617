@@ -9,16 +9,15 @@ namespace Server
 {
     public class Player
     {
-        public Player(int userID, Socket socket)
+        public Player(int userID, String userName)
         {
             this.userID = userID;
-            this.userSocket = socket;
+            this.userName = userName;
         }
 
         public int userID;
         public String userName = "";
         public String location = "Room 0";
-        public Socket userSocket;
     }
 
 }

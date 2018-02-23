@@ -95,9 +95,23 @@ namespace Server
             }
         }
 
-        static void addPlayerToArray(Player[]players, int userID,String userName)
+        static Socket getDirectMessageSocket(string messageText, string targetName, string senderName, List<Player> players)
         {
-            players[userID] = new Player(userID, userName);
+            // Check player exists
+            // Make username lowercase
+            string lowercaseName = targetName.ToLower();
+
+            // Search for name in player array
+            for (var i = 0; i < players.Capacity; i++)
+            {
+                if (lowercaseName == players[i].userName.ToLower())
+                {
+                    // Return target socket
+                    return players[i].socket;
+                }
+            }
+
+            return players[0].socket;
         }
 
         static void Main(string[] args)
@@ -150,10 +164,10 @@ namespace Server
                     String Msg = "";
 
                     // Set username on first message
-                    if (Int32.Parse(numberOfMessages) == 0)
+                    if (Int32.Parse(numberOfMessages) == 0 || players[Int32.Parse(userID)].userName == "")
                     {
                         // Add player to list
-                        players.Add(new Player(0, userInputString));
+                        players.Add(new Player(0, userInputString, userMessage.socket));
 
                         Console.WriteLine("Creating player");
                         Msg = "Hello " + players[Int32.Parse(userID)].userName;
@@ -161,8 +175,82 @@ namespace Server
                     }
                     else
                     {
-                        // What to do on later messages
-                        Msg = "Hello " + players[Int32.Parse(userID)].userName;
+                        // Get player info
+                        Player currentPlayer = players[Int32.Parse(userID)];
+
+                        // Split up text part of message into words
+                        string[] parsedTextMessage = userInputString.Split(new Char[] { ' ' });
+
+                        // Get lowercase of first word
+                        string command = parsedTextMessage[0].ToLower();
+                        string option = "";
+                        string additionalText = "";
+
+                        Console.WriteLine(parsedTextMessage.Length);
+
+                        // Get second word as option
+                        if (parsedTextMessage.Length > 0)
+                        {
+                            option = parsedTextMessage[1].ToLower();
+                        }
+
+                        // Reappend third words and higher
+                        if (parsedTextMessage.Length > 3)
+                        {
+                            additionalText = parsedTextMessage[2];
+                            if(parsedTextMessage.Length > 2)
+                            {
+                                for (var i = 3; i < parsedTextMessage.Length; i++)
+                                {
+                                    additionalText = additionalText + " " + parsedTextMessage[i];
+                                }
+                            }
+
+                        }
+
+                        switch (command)
+                        {
+                            case "go":
+                                // Direction commands
+                                Console.WriteLine("Directions");
+                                Msg = "Going " + option;
+                                break;
+                            case "message":
+                                // Message options
+                                switch (option)
+                                {
+                                    case "all":
+                                        // Send public message to room
+                                        Console.WriteLine("Directions");
+                                        Msg = "Sending message to all players in " + currentPlayer.currentRoom;
+                                        // TODO send additional text to all players in the same room
+                                        break;
+                                    default:
+                                        // Send private message to player
+                                        Socket targetSocket = getDirectMessageSocket(additionalText, option, currentPlayer.userName, players);
+                                        Console.WriteLine("Sending private message to " + option);
+
+                                        ASCIIEncoding dmSendEncoder = new ASCIIEncoding();
+                                        byte[] dmSendBuffer = dmSendEncoder.GetBytes(Msg);
+
+                                        try
+                                        {
+                                            // Send return message
+                                            int bytesSent = targetSocket.Send(dmSendBuffer);
+                                        }
+                                        catch (System.Exception ex)
+                                        {
+                                            Console.Write(ex);
+                                        }
+                                        break;
+                                        // TODO get this to work
+                                }
+                                break;
+                            default:
+                                // Default message
+                                Msg = "I have no idea what you mean by " + userInputString;
+                                break;
+                        }
                     }
 
                     Console.WriteLine(userInputString + " " + numberOfMessages + " " + userID);

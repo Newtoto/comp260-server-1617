@@ -16,13 +16,13 @@ namespace Server
         {
             roomMap = new Dictionary<string, Room>();
             {
-                var room = new Room("Room 0", "You are standing in the entrance hall\nAll adventures start here");
+                var room = new Room("Room 1", "You are standing in the entrance hall\nAll adventures start here");
                 room.north = "Room 1";
                 roomMap.Add(room.name, room);
             }
 
             {
-                var room = new Room("Room 1", "You are in room 1");
+                var room = new Room("Room 2", "You are in room 2");
                 room.south = "Room 0";
                 room.west = "Room 3";
                 room.east = "Room 2";
@@ -30,26 +30,26 @@ namespace Server
             }
 
             {
-                var room = new Room("Room 2", "You are in room 2");
+                var room = new Room("Room 3", "You are in room 3");
                 room.north = "Room 4";
                 roomMap.Add(room.name, room);
             }
 
             {
-                var room = new Room("Room 3", "You are in room 3");
+                var room = new Room("Room 4", "You are in room 4");
                 room.east = "Room 1";
                 roomMap.Add(room.name, room);
             }
 
             {
-                var room = new Room("Room 4", "You are in room 4");
+                var room = new Room("Room 5", "You are in room 5");
                 room.south = "Room 2";
                 room.west = "Room 5";
                 roomMap.Add(room.name, room);
             }
 
             {
-                var room = new Room("Room 5", "You are in room 5");
+                var room = new Room("Room 6", "You are in room 6");
                 room.south = "Room 1";
                 room.east = "Room 4";
                 roomMap.Add(room.name, room);

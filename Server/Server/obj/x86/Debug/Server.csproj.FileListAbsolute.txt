@@ -3,3 +3,9 @@ C:\Users\Andy\Downloads\Lecture 03\02.threaded sockets\threaded csharp\Server\Se
 C:\Users\Andy\Downloads\Lecture 03\02.threaded sockets\threaded csharp\Server\Server\obj\x86\Debug\Server.csproj.CoreCompileInputs.cache
 C:\Users\Andy\Downloads\Lecture 03\02.threaded sockets\threaded csharp\Server\Server\obj\x86\Debug\Server.exe
 C:\Users\Andy\Downloads\Lecture 03\02.threaded sockets\threaded csharp\Server\Server\obj\x86\Debug\Server.pdb
+C:\Users\Andy\Documents\comp260-server-1617\Server\Server\bin\Debug\Server.exe
+C:\Users\Andy\Documents\comp260-server-1617\Server\Server\bin\Debug\Server.pdb
+C:\Users\Andy\Documents\comp260-server-1617\Server\Server\obj\x86\Debug\Server.csproj.CoreCompileInputs.cache
+C:\Users\Andy\Documents\comp260-server-1617\Server\Server\obj\x86\Debug\Server.exe
+C:\Users\Andy\Documents\comp260-server-1617\Server\Server\obj\x86\Debug\Server.pdb
+C:\Users\Andy\Documents\comp260-server-1617\Server\Server\obj\x86\Debug\Server.csprojResolveAssemblyReference.cache

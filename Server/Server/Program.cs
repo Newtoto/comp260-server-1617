@@ -13,7 +13,7 @@ namespace Server
     class Program
     {
         static bool quit = false;
-        static LinkedList<String> incommingMessages = new LinkedList<string>();
+        static LinkedList<Message> incommingMessages = new LinkedList<Message>();
 
         class ReceiveThreadLaunchInfo
         {
@@ -40,6 +40,29 @@ namespace Server
                 var myThread = new Thread(clientReceiveThread);
                 myThread.Start(new ReceiveThreadLaunchInfo(ID, newClientSocket));
 
+                lock (incommingMessages)
+                {
+                    incommingMessages.AddLast(new Message(ID, newClientSocket, "New client connected"));
+                }
+
+                // Create player and add to list
+                Player player = new Player(ID, newClientSocket);
+
+                // Send client welcome message
+                String Msg = "Greetings traveller, my name is Falconhoof and I will be your guide." + "\nState your name.";
+                ASCIIEncoding sendEncoder = new ASCIIEncoding();
+                byte[] sendBuffer = sendEncoder.GetBytes(Msg);
+
+                try
+                {
+                    // Send greeting message to client
+                    int bytesSent = newClientSocket.Send(sendBuffer);
+                }
+                catch (System.Exception ex)
+                {
+                    Console.Write(ex);
+                }
+
                 ID++;
             }
         }
@@ -63,20 +86,35 @@ namespace Server
 
                         lock (incommingMessages)
                         {
-                            incommingMessages.AddLast(receiveInfo.ID +":" + encoder.GetString(buffer, 0, result));
+                            Message msg = new Message(receiveInfo.ID, receiveInfo.socket, encoder.GetString(buffer, 0, result));
+                            incommingMessages.AddLast(msg);
                         }
                     }
                 }
                 catch (System.Exception ex)
                 {
+                    Console.WriteLine(ex);
                     socketLost = true;
                 }
             }
         }
 
+        static Socket getSocketFromID(int playerID, Player [] players)
+        {
+            return players[playerID].userSocket;
+        }
+
 
         static void Main(string[] args)
         {
+            // Create and initialise the dungeon once
+            var dungeon = new Dungeon();
+            dungeon.Init();
+
+            // Create player list
+            Player[] players;
+            
+
             Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
             IPEndPoint ipLocal = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8221);
@@ -94,22 +132,40 @@ namespace Server
             int itemsProcessed = 0;
             while (true)
             {
-                String labelToPrint = "";
+                Message userMessage = new Message(0, s, "");
+
                 lock (incommingMessages)
                 {
                     if (incommingMessages.First != null)
                     {
-                        labelToPrint = incommingMessages.First.Value;
+                        // Get message info from first item in message array
+                        userMessage = incommingMessages.First.Value;
 
+                        // Remove read message
                         incommingMessages.RemoveFirst();
 
                         itemsProcessed++;
                     }
                 }
 
-                if (labelToPrint != "")
+                if (userMessage.message != "")
                 {
-                    Console.WriteLine(tick + ":" + itemsProcessed + " " + labelToPrint);
+                    Console.WriteLine(userMessage.userID.ToString() + "   "+ tick + ":" + itemsProcessed + " " + userMessage.message);
+
+                    // Send client welcome message
+                    String Msg = "Greetings traveller, my name is Falconhoof and I will be your guide." + "\nState your name.";
+                    ASCIIEncoding sendEncoder = new ASCIIEncoding();
+                    byte[] sendBuffer = sendEncoder.GetBytes(Msg);
+
+                    try
+                    {
+                        // Send greeting message to client
+                        int bytesSent = userMessage.socket.Send(sendBuffer);
+                    }
+                    catch (System.Exception ex)
+                    {
+                        Console.Write(ex);
+                    }
                 }
 
                 tick++;

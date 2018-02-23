@@ -9,15 +9,21 @@ namespace Server
 {
     public class Message 
     {
-        public Message(int userID, Socket socket, String message)
+        public Message(Socket socket, String messageText, string receiveInfoID = "")
         {
-            this.userID = userID;
-            this.message = message;
+            if(receiveInfoID != ""){
+                string[] playerInfo = receiveInfoID.Split(new Char[] { ':' });
+                this.messageNumber = Int32.Parse(playerInfo[0]);
+                this.userID = Int32.Parse(playerInfo[1]);
+            }
+
+            this.messageText = messageText;
             this.socket = socket;
         }
 
         public int userID;
-        public String message;
+        public int messageNumber;
+        public String messageText;
         public Socket socket;
     }
 

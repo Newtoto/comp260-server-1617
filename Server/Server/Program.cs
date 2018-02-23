@@ -38,15 +38,11 @@ namespace Server
                 var newClientSocket = s.Accept();
 
                 var myThread = new Thread(clientReceiveThread);
+                ReceiveThreadLaunchInfo receiveInfo = obj as ReceiveThreadLaunchInfo;
+
                 myThread.Start(new ReceiveThreadLaunchInfo(ID, newClientSocket));
 
-                lock (incommingMessages)
-                {
-                    incommingMessages.AddLast(new Message(ID, newClientSocket, "New client connected"));
-                }
-
-                // Create player and add to list
-                Player player = new Player(ID, newClientSocket);
+                Console.WriteLine("New client");
 
                 // Send client welcome message
                 String Msg = "Greetings traveller, my name is Falconhoof and I will be your guide." + "\nState your name.";
@@ -86,7 +82,7 @@ namespace Server
 
                         lock (incommingMessages)
                         {
-                            Message msg = new Message(receiveInfo.ID, receiveInfo.socket, encoder.GetString(buffer, 0, result));
+                            Message msg = new Message(receiveInfo.socket, receiveInfo.ID+ ":" + encoder.GetString(buffer, 0, result));
                             incommingMessages.AddLast(msg);
                         }
                     }
@@ -99,21 +95,15 @@ namespace Server
             }
         }
 
-        static Socket getSocketFromID(int playerID, Player [] players)
+        static void addPlayerToArray(Player[]players, int userID,String userName)
         {
-            return players[playerID].userSocket;
+            players[userID] = new Player(userID, userName);
         }
-
 
         static void Main(string[] args)
         {
-            // Create and initialise the dungeon once
-            var dungeon = new Dungeon();
-            dungeon.Init();
-
-            // Create player list
-            Player[] players;
-            
+            // Create playerlist
+            List<Player> players = new List<Player>();
 
             Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
@@ -132,7 +122,8 @@ namespace Server
             int itemsProcessed = 0;
             while (true)
             {
-                Message userMessage = new Message(0, s, "");
+
+                Message userMessage = new Message(s, "");
 
                 lock (incommingMessages)
                 {
@@ -148,18 +139,41 @@ namespace Server
                     }
                 }
 
-                if (userMessage.message != "")
+                if (userMessage.messageText != "")
                 {
-                    Console.WriteLine(userMessage.userID.ToString() + "   "+ tick + ":" + itemsProcessed + " " + userMessage.message);
+                    string[] receivedMessage = userMessage.messageText.Split(new Char[] { ':' });
 
-                    // Send client welcome message
-                    String Msg = "Greetings traveller, my name is Falconhoof and I will be your guide." + "\nState your name.";
+                    string userID = receivedMessage[0];
+                    string numberOfMessages = receivedMessage[1];
+                    string userInputString = receivedMessage[2];
+
+                    String Msg = "";
+
+                    // Set username on first message
+                    if (Int32.Parse(numberOfMessages) == 0)
+                    {
+                        // Add player to list
+                        players.Add(new Player(0, userInputString));
+
+                        Console.WriteLine("Creating player");
+                        Msg = "Hello " + players[Int32.Parse(userID)].userName;
+
+                    }
+                    else
+                    {
+                        // What to do on later messages
+                        Msg = "Hello " + players[Int32.Parse(userID)].userName;
+                    }
+
+                    Console.WriteLine(userInputString + " " + numberOfMessages + " " + userID);
+
+                    // Parse user input and do action here
                     ASCIIEncoding sendEncoder = new ASCIIEncoding();
                     byte[] sendBuffer = sendEncoder.GetBytes(Msg);
 
                     try
                     {
-                        // Send greeting message to client
+                        // Send return message
                         int bytesSent = userMessage.socket.Send(sendBuffer);
                     }
                     catch (System.Exception ex)

@@ -37,7 +37,11 @@ namespace Client
 
             while (true)
             {
-                String Msg = ID.ToString() + " testing, testing, 1,2,3";
+                Console.WriteLine("\n");
+
+                var entry = Console.ReadLine();
+
+                String Msg = ID.ToString() + entry;
                 ID++;
                 ASCIIEncoding encoder = new ASCIIEncoding();
                 byte[] buffer = encoder.GetBytes(Msg);

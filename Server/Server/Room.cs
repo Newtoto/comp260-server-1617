@@ -36,8 +36,8 @@ namespace Server
             get { return exits[3]; }
             set { exits[3] = value; }
         }
-
-
+        
+        public List<String> availableExits;
         public String name = "";
         public String desc = "";
         public String[] exits = new String[4];

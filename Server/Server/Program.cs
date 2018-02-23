@@ -118,6 +118,8 @@ namespace Server
         {
             // Create playerlist
             List<Player> players = new List<Player>();
+            Dungeon dungeon = new Dungeon();
+            dungeon.Init();
 
             Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
@@ -168,9 +170,16 @@ namespace Server
                     {
                         // Add player to list
                         players.Add(new Player(0, userInputString, userMessage.socket));
+                        Player currentPlayer = players[Int32.Parse(userID)];
 
                         Console.WriteLine("Creating player");
-                        Msg = "Hello " + players[Int32.Parse(userID)].userName;
+
+                        // Construct first time intro text
+                        string welcomePlayerText = "Welcome to my dungeon " + players[Int32.Parse(userID)].userName + "\n";
+                        string firstRoomText = dungeon.GetRoomDescription(currentPlayer);
+                        // Get direction options
+                        string directions = dungeon.GetExitsText(currentPlayer);
+                        Msg = welcomePlayerText + firstRoomText + directions;
 
                     }
                     else
@@ -202,7 +211,7 @@ namespace Server
                             {
                                 for (var i = 3; i < parsedTextMessage.Length; i++)
                                 {
-                                    additionalText = additionalText + " " + parsedTextMessage[i];
+                                    additionalText += " " + parsedTextMessage[i];
                                 }
                             }
 
@@ -214,6 +223,7 @@ namespace Server
                                 // Direction commands
                                 Console.WriteLine("Directions");
                                 Msg = "Going " + option;
+                                Console.WriteLine(dungeon.GetExitsText(currentPlayer));
                                 break;
                             case "message":
                                 // Message options

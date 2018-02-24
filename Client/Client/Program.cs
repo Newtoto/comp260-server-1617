@@ -49,7 +49,7 @@ namespace Client
                         ASCIIEncoding encoderSend = new ASCIIEncoding();
                         String recdMsg = encoderSend.GetString(bufferReceive, 0, result);
 
-                        Console.WriteLine("Received: " + recdMsg);
+                        Console.WriteLine(recdMsg);
                     }
                 }
                 catch (System.Exception ex)

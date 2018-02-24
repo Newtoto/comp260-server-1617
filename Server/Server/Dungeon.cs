@@ -8,186 +8,148 @@ namespace Server
 {
     public class Dungeon
     {        
-        Dictionary<String, Room> roomMap;
+        Dictionary<int, Room> roomMap;
 
         public void Init()
         {
-            roomMap = new Dictionary<string, Room>();
+            roomMap = new Dictionary<int, Room>();
+            // Room 1
             {
-                var room = new Room("Room 1", "You are standing in the entrance hall\nAll adventures start here\n");
-                room.north = "Room 1";
-                roomMap.Add(room.name, room);
+                var room = new Room(1, "2,B,X,X", "Entrance Hall", "All adventures start here.\n");
+                roomMap.Add(room.roomID, room);
             }
 
+            // Room 2
             {
-                var room = new Room("Room 2", "You are in room 2\n");
-                room.south = "Room 0";
-                room.west = "Room 3";
-                room.east = "Room 2";
-                roomMap.Add(room.name, room);
+                var room = new Room(2, "5,3,B,X", "Room 2", "You are in room 2\n");
+                roomMap.Add(room.roomID, room);
             }
 
+            // Room 3
             {
-                var room = new Room("Room 3", "You are in room 3\n");
-                room.north = "Room 4";
-                roomMap.Add(room.name, room);
+                var room = new Room(3, "X,8,4,B", "Room 3", "You are in room 3\n");
+                roomMap.Add(room.roomID, room);
             }
 
+            // Room 4
             {
-                var room = new Room("Room 4", "You are in room 4\n");
-                room.east = "Room 1";
-                roomMap.Add(room.name, room);
+                var room = new Room(4, "B,X,X,1", "Room 4", "You are in room 4\n");
+                roomMap.Add(room.roomID, room);
             }
 
+            // Room 5
             {
-                var room = new Room("Room 5", "You are in room 5\n");
-                room.south = "Room 2";
-                room.west = "Room 5";
-                roomMap.Add(room.name, room);
+                var room = new Room(5, "X,X,2,6", "Room 5", "You are in room 5\n");
+                roomMap.Add(room.roomID, room);
             }
 
+            // Room 6
             {
-                var room = new Room("Room 6", "You are in room 6\n");
-                room.south = "Room 1";
-                room.east = "Room 4";
-                roomMap.Add(room.name, room);
+                var room = new Room(6, "7,5,X,X", "Room 6", "You are in room 6\n");
+                roomMap.Add(room.roomID, room);
             }
 
+            // Room 7
+            {
+                var room = new Room(7, "X,X,6,X", "Room 7", "You are in room7\n");
+                roomMap.Add(room.roomID, room);
+            }
+
+            // Room 8
+            {
+                var room = new Room(8, "9,X,X,3", "Room 8", "You are in room 8\n");
+                roomMap.Add(room.roomID, room);
+            }
+
+            // Room 9
+            {
+                var room = new Room(9, "10,X,8,X", "Room 9", "You are in room 9\n");
+                roomMap.Add(room.roomID, room);
+            }
+
+            // Room 10
+            {
+                var room = new Room(10, "X,X,9,11", "Room 10", "You are in room 10\n");
+                roomMap.Add(room.roomID, room);
+            }
+
+            // Room 11
+            {
+                var room = new Room(11, "X,10,X,X", "Room 11", "You are in room 11\n");
+                roomMap.Add(room.roomID, room);
+            }
         }
 
-        public String GetRoomDescription(Player player)
+        public Room GetPlayerRoom(Player player)
         {
             Room playerRoom;
-            roomMap.TryGetValue(player.currentRoom, out playerRoom);
+            roomMap.TryGetValue(player.currentRoomID, out playerRoom);
 
-            return playerRoom.desc;
+            return playerRoom;
         }
 
-        public String GetExitsText(Player player)
+        // Try to move the player in direction and return 1, if not return 0
+        public int MovePlayer(Player player, String direction)
         {
-            // Make room for dictionary to save to
-            Room playerRoom;
-            // Lookup room in dictionary
-            roomMap.TryGetValue(player.currentRoom, out playerRoom);
-            // Create exit list with room function
-            List<String> availableExits = playerRoom.availableExits;
-            Console.WriteLine(playerRoom.availableExits.Capacity);
+            // Get the room the player is trying to move from
+            Room currentRoom = GetPlayerRoom(player);
 
-            // Start off exit text with first exit
-            string exitsText = "You can go " + availableExits[0];
-
-            if (availableExits.Capacity > 2)
+            if (direction == "north")
             {
-                for (var i = 1; i < availableExits.Capacity - 1; i++)
+                // check north
+                if(currentRoom.north != "X" && currentRoom.north != "B")
                 {
-                    exitsText += ", " + availableExits[i];
+                    // Update player room to new room
+                    player.currentRoomID = Int32.Parse(currentRoom.north);
+                    return 1;
+                }
+                else
+                {
+                    return 0;
                 }
             }
-
-            if (availableExits.Capacity > 1)
+            else if (direction == "east")
             {
-                // Append final direction using connective
-                exitsText += " or " + availableExits[1];
+                // check east
+                if (currentRoom.east != "X" && currentRoom.east != "B")
+                {
+                    // Update player room to new room
+                    player.currentRoomID = Int32.Parse(currentRoom.east);
+                    return 1;
+                }
+                else
+                {
+                    return 0;
+                }
             }
-
-            //Append full stop and new line
-            exitsText += ".\n";
-
-            return exitsText;
-
+            else if (direction == "south")
+            {
+                // check south
+                if (currentRoom.south != "X" && currentRoom.south != "B")
+                {
+                    // Update player room to new room
+                    player.currentRoomID = Int32.Parse(currentRoom.south);
+                    return 1;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+            else
+            {
+                // check west
+                if (currentRoom.west != "X" && currentRoom.west != "B")
+                {
+                    // Update player room to new room
+                    player.currentRoomID = Int32.Parse(currentRoom.west);
+                    return 1;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
         }
-
-    //    public void Go(string direction, Player player)
-    //    {
-    //        for (var i = 0; i < player.currentRoom.exits.Length; i++)
-    //        {
-    //            if (currentRoom.exits[i] != null)
-    //            {
-    //                Console.Write(Room.exitNames[i] + " ");
-    //            }
-    //        }
-
-    //        Console.Write("\n> ");
-
-    //        var key = Console.ReadLine();
-
-    //        var input = key.Split(' ');
-
-    //        switch (input[0].ToLower())
-    //        {
-    //            case "help":
-    //                Console.Clear();
-    //                Console.WriteLine("\nCommands are ....");
-    //                Console.WriteLine("help - for this screen");
-    //                Console.WriteLine("look - to look around");
-    //                Console.WriteLine("go [north | south | east | west]  - to travel between locations");
-    //                Console.WriteLine("\nPress any key to continue");
-    //                Console.ReadKey(true);
-    //                break;
-
-    //            case "look":
-    //                //loop straight back
-    //                Console.Clear();
-    //                Thread.Sleep(1000);
-    //                break;
-
-    //            case "say":
-    //                Console.Write("You say ");
-    //                for (var i = 1; i < input.Length; i++)
-    //                {
-    //                    Console.Write(input[i] + " ");
-    //                }
-
-    //                Thread.Sleep(1000);
-    //                Console.Clear();
-    //                break;
-
-    //            case "go":
-    //                // is arg[1] sensible?
-    //                if ((input[1].ToLower() == "north") && (currentRoom.north != null))
-    //                {
-    //                    currentRoom = roomMap[currentRoom.north];
-    //                }
-    //                else
-    //                {
-    //                    if ((input[1].ToLower() == "south") && (currentRoom.south != null))
-    //                    {
-    //                        currentRoom = roomMap[currentRoom.south];
-    //                    }
-    //                    else
-    //                    {
-    //                        if ((input[1].ToLower() == "east") && (currentRoom.east != null))
-    //                        {
-    //                            currentRoom = roomMap[currentRoom.east];
-    //                        }
-    //                        else
-    //                        {
-    //                            if ((input[1].ToLower() == "west") && (currentRoom.west != null))
-    //                            {
-    //                                currentRoom = roomMap[currentRoom.west];
-    //                            }
-    //                            else
-    //                            {
-    //                                //handle error
-    //                                Console.WriteLine("\nERROR");
-    //                                Console.WriteLine("\nCan not go "+ input[1]+ " from here");
-    //                                Console.WriteLine("\nPress any key to continue");
-    //                                Console.ReadKey(true);
-    //                            }
-    //                        }
-    //                    }
-    //                }
-    //                break;
-
-    //            default:
-    //                //handle error
-    //                Console.WriteLine("\nERROR");
-    //                Console.WriteLine("\nCan not " + key);
-    //                Console.WriteLine("\nPress any key to continue");
-    //                Console.ReadKey(true);
-    //                break;
-    //        }
-
-    //    }
     }
 }

@@ -176,10 +176,14 @@ namespace Server
 
                         // Construct first time intro text
                         string welcomePlayerText = "Welcome to my dungeon " + players[Int32.Parse(userID)].userName + "\n";
-                        string firstRoomText = dungeon.GetRoomDescription(currentPlayer);
-                        // Get direction options
-                        string directions = dungeon.GetExitsText(currentPlayer);
-                        Msg = welcomePlayerText + firstRoomText + directions;
+
+                        // Construct room specific text
+                        Room enteredRoom = dungeon.GetPlayerRoom(currentPlayer);
+                        string roomNameText = "You find yourself in the " + enteredRoom.name + ". ";
+                        string roomDescriptionText = enteredRoom.desc;
+                        string directions = enteredRoom.availableExitsText;
+
+                        Msg = welcomePlayerText + roomNameText + roomDescriptionText + directions;
 
                     }
                     else
@@ -198,13 +202,13 @@ namespace Server
                         Console.WriteLine(parsedTextMessage.Length);
 
                         // Get second word as option
-                        if (parsedTextMessage.Length > 0)
+                        if (parsedTextMessage.Length > 1)
                         {
                             option = parsedTextMessage[1].ToLower();
                         }
 
                         // Reappend third words and higher
-                        if (parsedTextMessage.Length > 3)
+                        if (parsedTextMessage.Length > 2)
                         {
                             additionalText = parsedTextMessage[2];
                             if(parsedTextMessage.Length > 2)
@@ -220,41 +224,66 @@ namespace Server
                         switch (command)
                         {
                             case "go":
-                                // Direction commands
-                                Console.WriteLine("Directions");
-                                Msg = "Going " + option;
-                                Console.WriteLine(dungeon.GetExitsText(currentPlayer));
+                                // Check for valid direction input
+                                if(option == "north" || option == "east" || option == "south" || option == "west")
+                                {
+                                    if (dungeon.MovePlayer(currentPlayer, option) == 1)
+                                    {
+                                        // Let player know they have moved
+                                        Msg = "You go " + option + ".\n";
+                                    }
+                                    else
+                                    {
+                                        // Tell player they can't move that way
+                                        Msg = "You cannot go " + option + ".\n";
+                                    }
+
+                                    Room currentRoom = dungeon.GetPlayerRoom(currentPlayer);
+                                    string roomNameText = "You find yourself in the " + currentRoom.name + ". ";
+                                    string roomDescriptionText = currentRoom.desc;
+                                    // Get direction options
+                                    string directions = currentRoom.availableExitsText;
+                                    Msg += roomNameText + roomDescriptionText+ directions;
+                                }
+                                else
+                                {
+                                    Msg = "Sorry, you can't go " + option + ".";
+                                }
                                 break;
                             case "message":
-                                // Message options
-                                switch (option)
+                                if(additionalText != "")
                                 {
-                                    case "all":
-                                        // Send public message to room
-                                        Console.WriteLine("Directions");
-                                        Msg = "Sending message to all players in " + currentPlayer.currentRoom;
-                                        // TODO send additional text to all players in the same room
-                                        break;
-                                    default:
-                                        // Send private message to player
-                                        Socket targetSocket = getDirectMessageSocket(additionalText, option, currentPlayer.userName, players);
-                                        Console.WriteLine("Sending private message to " + option);
+                                    // Message options
+                                    switch (option)
+                                    {
+                                        case "all":
+                                            // Send public message to room
+                                            Console.WriteLine("Directions");
+                                            Msg = "Sending message to all players in " + currentPlayer.currentRoomID;
+                                            // TODO send additional text to all players in the same room
+                                            break;
+                                        default:
+                                            // Send private message to player
+                                            Socket targetSocket = getDirectMessageSocket(additionalText, option, currentPlayer.userName, players);
+                                            Console.WriteLine("Sending private message to " + option);
 
-                                        ASCIIEncoding dmSendEncoder = new ASCIIEncoding();
-                                        byte[] dmSendBuffer = dmSendEncoder.GetBytes(Msg);
+                                            ASCIIEncoding dmSendEncoder = new ASCIIEncoding();
+                                            byte[] dmSendBuffer = dmSendEncoder.GetBytes(Msg);
 
-                                        try
-                                        {
-                                            // Send return message
-                                            int bytesSent = targetSocket.Send(dmSendBuffer);
-                                        }
-                                        catch (System.Exception ex)
-                                        {
-                                            Console.Write(ex);
-                                        }
-                                        break;
-                                        // TODO get this to work
+                                            try
+                                            {
+                                                // Send return message
+                                                int bytesSent = targetSocket.Send(dmSendBuffer);
+                                            }
+                                            catch (System.Exception ex)
+                                            {
+                                                Console.Write(ex);
+                                            }
+                                            break;
+                                            // TODO get this to work
+                                    }
                                 }
+                                else Msg = "Sorry, you have to enter a message first.";
                                 break;
                             default:
                                 // Default message

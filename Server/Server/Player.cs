@@ -18,7 +18,7 @@ namespace Server
 
         public int userID;
         public String userName = "";
-        public String currentRoom = "Room 1";
+        public int currentRoomID = 1;
         public Socket socket;
     }
 

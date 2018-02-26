@@ -14,3 +14,4 @@ D:\comp260-server-1617\MessageTypes\obj\Debug\MessageTypes.csprojResolveAssembly
 D:\comp260-server-1617\MessageTypes\obj\Debug\MessageTypes.csproj.CoreCompileInputs.cache
 D:\comp260-server-1617\MessageTypes\obj\Debug\MessageTypes.dll
 D:\comp260-server-1617\MessageTypes\obj\Debug\MessageTypes.pdb
+C:\Users\Andy\Documents\comp260-server-1617\MessageTypes\obj\Debug\MessageTypes.csprojResolveAssemblyReference.cache

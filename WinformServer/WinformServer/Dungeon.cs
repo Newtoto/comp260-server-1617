@@ -80,6 +80,7 @@ namespace Server
             }
         }
 
+        // Get the roomId of the room the player is in
         public Room GetPlayerRoom(Player player)
         {
             Room playerRoom;
@@ -152,6 +153,7 @@ namespace Server
             }
         }
 
+        // Take players message and get run appropriate commands if available
         public String ParsePlayerInput(Player player, String playerInput)
         {
             // Split up text part of message into words

@@ -127,6 +127,37 @@ namespace Server
             }
         }
 
+        static Socket GetSocketFromUsername(String username)
+        {
+            lock (clientDictionary)
+            {
+                foreach (KeyValuePair<String, Player> o in clientDictionary)
+                {
+                    if (o.Value.userName == username)
+                    {
+                        return o.Value.socket;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        static bool UsernameTaken(String username)
+        {
+            lock (clientDictionary)
+            {
+                foreach (KeyValuePair<String, Player> o in clientDictionary)
+                {
+                    if (o.Value.userName == username)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
         static String GetNameFromSocket(Socket s)
         {
             lock (clientDictionary)
@@ -141,6 +172,30 @@ namespace Server
             }
 
             return null;
+        }
+
+        static String GetUsernameFromSocket(Socket s)
+        {
+            lock (clientDictionary)
+            {
+                foreach (KeyValuePair<String, Player> o in clientDictionary)
+                {
+                    if (o.Value.socket == s)
+                    {
+                        return o.Value.userName;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        static String GetUsernameFromID (String userID)
+        {
+            lock (clientDictionary)
+            {
+                return clientDictionary[userID].userName;
+            }
         }
 
         static void RemoveClientBySocket(Socket s)
@@ -236,13 +291,13 @@ namespace Server
                                     {
                                         PrivateChatMsg privateMsg = (PrivateChatMsg)m;
 
-                                        String formattedMsg = "PRIVATE <" + GetNameFromSocket(chatClient) + "> " + privateMsg.msg;
+                                        String formattedMsg = "Private message from " + GetUsernameFromSocket(chatClient) + ": " + privateMsg.msg;
 
                                         Console.WriteLine("private chat - " + formattedMsg + "to " + privateMsg.destination);
 
-                                        SendPrivateMessage(GetSocketFromName(privateMsg.destination), GetNameFromSocket(chatClient), formattedMsg);
+                                        SendPrivateMessage(GetSocketFromUsername(privateMsg.destination), GetNameFromSocket(chatClient), formattedMsg);
 
-                                        formattedMsg = "<" + GetNameFromSocket(chatClient) + "> --> <" +privateMsg.destination+"> " + privateMsg.msg;
+                                        formattedMsg = "Sent private message to " + privateMsg.destination + ": " + privateMsg.msg;
                                         SendPrivateMessage(chatClient, "", formattedMsg);
                                     }
                                     break;
@@ -256,23 +311,37 @@ namespace Server
                                             DungeonNavigationMsg navigationMsg = (DungeonNavigationMsg)m;
 
                                             // Set username
-                                            thisPlayer.userName = navigationMsg.msg;
-                                            usernameSet = true;
+                                            if (!UsernameTaken(navigationMsg.msg))
+                                            {
+                                                thisPlayer.userName = navigationMsg.msg;
+                                                usernameSet = true;
+                                                // Update client list
+                                                SendClientList();
 
-                                            // Send username welcome message
-                                            String formattedMsg = "Hello " + thisPlayer.userName;
-                                            SendPrivateMessage(chatClient, "", formattedMsg);
+                                                // Send username welcome message
+                                                String formattedMsg = "Hello " + thisPlayer.userName;
+                                                SendPrivateMessage(chatClient, "", formattedMsg);
 
-                                            // Get player's room
-                                            Room enteredRoom = dungeon.GetPlayerRoom(thisPlayer);
-                                            // Create text based on room
-                                            string roomNameText = "You find yourself in the " + enteredRoom.name + ". ";
-                                            string roomDescriptionText = enteredRoom.desc;
-                                            string directions = enteredRoom.availableExitsText;
-                                            formattedMsg = roomNameText + roomDescriptionText + directions;
-                                            
-                                            // Send room based text
-                                            SendPrivateMessage(chatClient, "", formattedMsg);
+                                                // Get player's room
+                                                Room enteredRoom = dungeon.GetPlayerRoom(thisPlayer);
+                                                // Create text based on room
+                                                string roomNameText = "You find yourself in the " + enteredRoom.name + ". ";
+                                                string roomDescriptionText = enteredRoom.desc;
+                                                string directions = enteredRoom.availableExitsText;
+                                                formattedMsg = roomNameText + roomDescriptionText + directions;
+
+                                                // Send room based text
+                                                SendPrivateMessage(chatClient, "", formattedMsg);
+                                            }
+                                            else
+                                            {
+                                                // Request different username
+                                                String formattedMsg = "Sorry, but the username '" + navigationMsg.msg + "' is already taken.";
+                                                SendPrivateMessage(chatClient, "", formattedMsg);
+
+                                                formattedMsg = "What else can I call you?"
+;                                                SendPrivateMessage(chatClient, "", formattedMsg);
+                                            }
                                         }
                                         else
                                         {

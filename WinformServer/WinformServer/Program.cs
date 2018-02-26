@@ -342,19 +342,20 @@ namespace Server
                                                 SendPrivateMessage(chatClient, "", formattedMsg);
 
                                                 formattedMsg = "What else can I call you?"
-;                                                SendPrivateMessage(chatClient, "", formattedMsg);
+;                                               SendPrivateMessage(chatClient, "", formattedMsg);
                                             }
                                         }
                                         else
                                         {
                                             DungeonNavigationMsg navigationMsg = (DungeonNavigationMsg)m;
 
-                                            // Respond to the player's navigation mo
+                                            // Respond to the player's navigation movement
                                             String formattedMsg = dungeon.ParsePlayerInput(thisPlayer, navigationMsg.msg);
 
                                             Console.WriteLine("Navigation - " + formattedMsg);
 
-                                            SendChatMessage(formattedMsg);
+                                            // Send response
+                                            SendPrivateMessage(chatClient, "", formattedMsg);
                                         }
                                     }
                                     break;

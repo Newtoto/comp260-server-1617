@@ -278,7 +278,7 @@ namespace Server
                                     {
                                         PublicChatMsg publicMsg = (PublicChatMsg)m;
 
-                                        String formattedMsg = "<" + GetNameFromSocket(chatClient)+"> " + publicMsg.msg;
+                                        String formattedMsg = "<" + GetUsernameFromSocket(chatClient)+"> " + publicMsg.msg;
 
                                         Console.WriteLine("public chat - " + formattedMsg);
 

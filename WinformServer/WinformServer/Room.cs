@@ -16,7 +16,7 @@ namespace Server
         // Display description for the room
         public String desc = "";
         // CSV string of 4 values containing exit data in NESW order
-        public String exitsCode = "";
+        private String exitsCode = "";
 
         public String north;
         public String east;
@@ -39,7 +39,7 @@ namespace Server
         }
 
         // Create string for describing available exits
-        public void GetAvailableExitsText()
+        private void GetAvailableExitsText()
         {
             List<String> availableExits = new List<String>();
             int numberOfExits = 0;

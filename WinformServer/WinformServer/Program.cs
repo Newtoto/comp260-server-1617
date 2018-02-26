@@ -322,6 +322,8 @@ namespace Server
                                                 String formattedMsg = "Hello " + thisPlayer.userName;
                                                 SendPrivateMessage(chatClient, "", formattedMsg);
 
+                                                Thread.Sleep(20);
+
                                                 // Get player's room
                                                 Room enteredRoom = dungeon.GetPlayerRoom(thisPlayer);
                                                 // Create text based on room

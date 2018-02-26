@@ -6,3 +6,11 @@ C:\Users\Andy\Documents\comp260-server-1617\WinformServer\WinformServer\obj\x86\
 C:\Users\Andy\Documents\comp260-server-1617\WinformServer\WinformServer\obj\x86\Debug\ServerWinform.csproj.CoreCompileInputs.cache
 C:\Users\Andy\Documents\comp260-server-1617\WinformServer\WinformServer\obj\x86\Debug\Server.exe
 C:\Users\Andy\Documents\comp260-server-1617\WinformServer\WinformServer\obj\x86\Debug\Server.pdb
+D:\comp260-server-1617\WinformServer\WinformServer\bin\Debug\Server.exe
+D:\comp260-server-1617\WinformServer\WinformServer\bin\Debug\Server.pdb
+D:\comp260-server-1617\WinformServer\WinformServer\bin\Debug\MessageTypes.dll
+D:\comp260-server-1617\WinformServer\WinformServer\bin\Debug\MessageTypes.pdb
+D:\comp260-server-1617\WinformServer\WinformServer\obj\x86\Debug\ServerWinform.csprojResolveAssemblyReference.cache
+D:\comp260-server-1617\WinformServer\WinformServer\obj\x86\Debug\ServerWinform.csproj.CoreCompileInputs.cache
+D:\comp260-server-1617\WinformServer\WinformServer\obj\x86\Debug\Server.exe
+D:\comp260-server-1617\WinformServer\WinformServer\obj\x86\Debug\Server.pdb

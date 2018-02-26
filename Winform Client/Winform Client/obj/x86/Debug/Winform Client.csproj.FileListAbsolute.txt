@@ -20,3 +20,14 @@ C:\Users\Andy\Documents\comp260-server-1617\Winform Client\Winform Client\obj\x8
 C:\Users\Andy\Documents\comp260-server-1617\Winform Client\Winform Client\obj\x86\Debug\Winform Client.csproj.CoreCompileInputs.cache
 C:\Users\Andy\Documents\comp260-server-1617\Winform Client\Winform Client\obj\x86\Debug\Winform Client.exe
 C:\Users\Andy\Documents\comp260-server-1617\Winform Client\Winform Client\obj\x86\Debug\Winform Client.pdb
+D:\comp260-server-1617\Winform Client\Winform Client\bin\Debug\Winform Client.exe
+D:\comp260-server-1617\Winform Client\Winform Client\bin\Debug\Winform Client.pdb
+D:\comp260-server-1617\Winform Client\Winform Client\bin\Debug\MessageTypes.dll
+D:\comp260-server-1617\Winform Client\Winform Client\bin\Debug\MessageTypes.pdb
+D:\comp260-server-1617\Winform Client\Winform Client\obj\x86\Debug\Winform Client.csprojResolveAssemblyReference.cache
+D:\comp260-server-1617\Winform Client\Winform Client\obj\x86\Debug\Winform_Client.Form1.resources
+D:\comp260-server-1617\Winform Client\Winform Client\obj\x86\Debug\Winform_Client.Properties.Resources.resources
+D:\comp260-server-1617\Winform Client\Winform Client\obj\x86\Debug\Winform Client.csproj.GenerateResource.Cache
+D:\comp260-server-1617\Winform Client\Winform Client\obj\x86\Debug\Winform Client.csproj.CoreCompileInputs.cache
+D:\comp260-server-1617\Winform Client\Winform Client\obj\x86\Debug\Winform Client.exe
+D:\comp260-server-1617\Winform Client\Winform Client\obj\x86\Debug\Winform Client.pdb

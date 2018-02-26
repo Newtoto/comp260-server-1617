@@ -8,3 +8,9 @@ C:\Users\Andy\Documents\comp260-server-1617\MessageTypes\bin\Debug\MessageTypes.
 C:\Users\Andy\Documents\comp260-server-1617\MessageTypes\obj\Debug\MessageTypes.csproj.CoreCompileInputs.cache
 C:\Users\Andy\Documents\comp260-server-1617\MessageTypes\obj\Debug\MessageTypes.dll
 C:\Users\Andy\Documents\comp260-server-1617\MessageTypes\obj\Debug\MessageTypes.pdb
+D:\comp260-server-1617\MessageTypes\bin\Debug\MessageTypes.dll
+D:\comp260-server-1617\MessageTypes\bin\Debug\MessageTypes.pdb
+D:\comp260-server-1617\MessageTypes\obj\Debug\MessageTypes.csprojResolveAssemblyReference.cache
+D:\comp260-server-1617\MessageTypes\obj\Debug\MessageTypes.csproj.CoreCompileInputs.cache
+D:\comp260-server-1617\MessageTypes\obj\Debug\MessageTypes.dll
+D:\comp260-server-1617\MessageTypes\obj\Debug\MessageTypes.pdb

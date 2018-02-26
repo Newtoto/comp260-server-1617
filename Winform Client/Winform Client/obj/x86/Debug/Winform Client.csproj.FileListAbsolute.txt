@@ -1,0 +1,22 @@
+C:\Users\Andy\Downloads\Lecture 03\03.Chat system\Winform Client\Winform Client\bin\Debug\Winform Client.exe
+C:\Users\Andy\Downloads\Lecture 03\03.Chat system\Winform Client\Winform Client\bin\Debug\Winform Client.pdb
+C:\Users\Andy\Downloads\Lecture 03\03.Chat system\Winform Client\Winform Client\bin\Debug\MessageTypes.dll
+C:\Users\Andy\Downloads\Lecture 03\03.Chat system\Winform Client\Winform Client\bin\Debug\MessageTypes.pdb
+C:\Users\Andy\Downloads\Lecture 03\03.Chat system\Winform Client\Winform Client\obj\x86\Debug\Winform Client.csprojResolveAssemblyReference.cache
+C:\Users\Andy\Downloads\Lecture 03\03.Chat system\Winform Client\Winform Client\obj\x86\Debug\Winform_Client.Form1.resources
+C:\Users\Andy\Downloads\Lecture 03\03.Chat system\Winform Client\Winform Client\obj\x86\Debug\Winform_Client.Properties.Resources.resources
+C:\Users\Andy\Downloads\Lecture 03\03.Chat system\Winform Client\Winform Client\obj\x86\Debug\Winform Client.csproj.GenerateResource.Cache
+C:\Users\Andy\Downloads\Lecture 03\03.Chat system\Winform Client\Winform Client\obj\x86\Debug\Winform Client.csproj.CoreCompileInputs.cache
+C:\Users\Andy\Downloads\Lecture 03\03.Chat system\Winform Client\Winform Client\obj\x86\Debug\Winform Client.exe
+C:\Users\Andy\Downloads\Lecture 03\03.Chat system\Winform Client\Winform Client\obj\x86\Debug\Winform Client.pdb
+C:\Users\Andy\Documents\comp260-server-1617\Winform Client\Winform Client\bin\Debug\Winform Client.exe
+C:\Users\Andy\Documents\comp260-server-1617\Winform Client\Winform Client\bin\Debug\Winform Client.pdb
+C:\Users\Andy\Documents\comp260-server-1617\Winform Client\Winform Client\bin\Debug\MessageTypes.dll
+C:\Users\Andy\Documents\comp260-server-1617\Winform Client\Winform Client\bin\Debug\MessageTypes.pdb
+C:\Users\Andy\Documents\comp260-server-1617\Winform Client\Winform Client\obj\x86\Debug\Winform Client.csprojResolveAssemblyReference.cache
+C:\Users\Andy\Documents\comp260-server-1617\Winform Client\Winform Client\obj\x86\Debug\Winform_Client.Form1.resources
+C:\Users\Andy\Documents\comp260-server-1617\Winform Client\Winform Client\obj\x86\Debug\Winform_Client.Properties.Resources.resources
+C:\Users\Andy\Documents\comp260-server-1617\Winform Client\Winform Client\obj\x86\Debug\Winform Client.csproj.GenerateResource.Cache
+C:\Users\Andy\Documents\comp260-server-1617\Winform Client\Winform Client\obj\x86\Debug\Winform Client.csproj.CoreCompileInputs.cache
+C:\Users\Andy\Documents\comp260-server-1617\Winform Client\Winform Client\obj\x86\Debug\Winform Client.exe
+C:\Users\Andy\Documents\comp260-server-1617\Winform Client\Winform Client\obj\x86\Debug\Winform Client.pdb

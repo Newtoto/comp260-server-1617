@@ -1,0 +1,8 @@
+C:\Users\Andy\Documents\comp260-server-1617\WinformServer\WinformServer\bin\Debug\Server.exe
+C:\Users\Andy\Documents\comp260-server-1617\WinformServer\WinformServer\bin\Debug\Server.pdb
+C:\Users\Andy\Documents\comp260-server-1617\WinformServer\WinformServer\bin\Debug\MessageTypes.dll
+C:\Users\Andy\Documents\comp260-server-1617\WinformServer\WinformServer\bin\Debug\MessageTypes.pdb
+C:\Users\Andy\Documents\comp260-server-1617\WinformServer\WinformServer\obj\x86\Debug\ServerWinform.csprojResolveAssemblyReference.cache
+C:\Users\Andy\Documents\comp260-server-1617\WinformServer\WinformServer\obj\x86\Debug\ServerWinform.csproj.CoreCompileInputs.cache
+C:\Users\Andy\Documents\comp260-server-1617\WinformServer\WinformServer\obj\x86\Debug\Server.exe
+C:\Users\Andy\Documents\comp260-server-1617\WinformServer\WinformServer\obj\x86\Debug\Server.pdb

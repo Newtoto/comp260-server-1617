@@ -15,67 +15,67 @@ namespace Server
             roomMap = new Dictionary<int, Room>();
             // Room 1
             {
-                var room = new Room(1, "2,B,X,X", "Entrance Hall", "All adventures start here. ");
+                var room = new Room(1, "2,B,X,X", "Entrance Hall", "A large stone statue lies before you weilding a sword and shield. ");
                 roomMap.Add(room.roomID, room);
             }
 
             // Room 2
             {
-                var room = new Room(2, "5,3,B,X", "Room 2", "You are in room 2. ");
+                var room = new Room(2, "5,3,B,X", "Ballroom", "Feel free to stay and have a dance. ");
                 roomMap.Add(room.roomID, room);
             }
 
             // Room 3
             {
-                var room = new Room(3, "X,8,4,B", "Room 3", "You are in room 3. ");
+                var room = new Room(3, "X,8,4,B", "Dusty Corridor", "Suits of armour line the walls. ");
                 roomMap.Add(room.roomID, room);
             }
 
             // Room 4
             {
-                var room = new Room(4, "B,X,X,1", "Room 4", "You are in room 4. ");
+                var room = new Room(4, "B,X,X,1", "Taxidermy Room", "You feel like you're being watched. ");
                 roomMap.Add(room.roomID, room);
             }
 
             // Room 5
             {
-                var room = new Room(5, "X,X,2,6", "Room 5", "You are in room 5. ");
+                var room = new Room(5, "X,X,2,6", "Drawing Room", "Have a seat and play some games. ");
                 roomMap.Add(room.roomID, room);
             }
 
             // Room 6
             {
-                var room = new Room(6, "7,5,X,X", "Room 6", "You are in room 6. ");
+                var room = new Room(6, "7,5,X,X", "Spiral Staircase", "The stairs weave round from the drawing room, a suspicious door lies to the north at the bottom. ");
                 roomMap.Add(room.roomID, room);
             }
 
             // Room 7
             {
-                var room = new Room(7, "X,X,6,X", "Room 7", "You are in room7. ");
+                var room = new Room(7, "X,X,6,X", "Furry Room", "Nothing to see here. ");
                 roomMap.Add(room.roomID, room);
             }
 
             // Room 8
             {
-                var room = new Room(8, "9,X,X,3", "Room 8", "You are in room 8. ");
+                var room = new Room(8, "9,X,X,3", "Armoury", "You would pick up a sword here, but you're too good for that. ");
                 roomMap.Add(room.roomID, room);
             }
 
             // Room 9
             {
-                var room = new Room(9, "10,X,8,X", "Room 9", "You are in room 9. ");
+                var room = new Room(9, "10,X,8,X", "Forge", "An assortment of tools are strewn about the room, likely used to make weapons and armour. ");
                 roomMap.Add(room.roomID, room);
             }
 
             // Room 10
             {
-                var room = new Room(10, "X,X,9,11", "Room 10", "You are in room 10. ");
+                var room = new Room(10, "X,X,9,11", "Training Room", "Test your skills on the dummies, dummy. ");
                 roomMap.Add(room.roomID, room);
             }
 
             // Room 11
             {
-                var room = new Room(11, "X,10,X,X", "Room 11", "You are in room 11. ");
+                var room = new Room(11, "X,10,X,X", "Storage Room", "There are lots and lots of boxes. ");
                 roomMap.Add(room.roomID, room);
             }
         }

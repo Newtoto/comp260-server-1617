@@ -184,8 +184,8 @@ namespace Winform_Client
             {
                 listBox_ClientList.DataSource = null;
                 currentClientList.Clear();
-                currentClientList.Add("All");
-                currentClientList.Add("Dungeon");
+                currentClientList.Add("Room");
+                currentClientList.Add("Navigation");
 
                 foreach (String s in clientList.clientList)
                 {

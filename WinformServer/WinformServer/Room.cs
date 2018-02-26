@@ -42,38 +42,46 @@ namespace Server
         public void GetAvailableExitsText()
         {
             List<String> availableExits = new List<String>();
+            int numberOfExits = 0;
 
             // Add north if available
             if (north != "X" && north != "B")
             {
                 availableExits.Add("north");
+                numberOfExits++;
             }
             // Add east if available
             if (east != "X" && east != "B")
             {
                 availableExits.Add("east");
+                numberOfExits++;
             }
             // Add south if available
             if (south != "X" && south != "B")
             {
                 availableExits.Add("south");
+                numberOfExits++;
             }
             // Add west if available
             if (west != "X" && west != "B")
             {
                 availableExits.Add("west");
+                numberOfExits++;
             }
 
             // Add first room to output text
             availableExitsText += availableExits[0];
 
-            for (var i = 0; i < 5; i++)
+            for (var i = 1; i < numberOfExits; i++)
             {
-                if (availableExits.Capacity < i)
+                if(i == numberOfExits - 1)
+                {
+                    availableExitsText += " or " + availableExits[i];
+                }
+                else
                 {
                     availableExitsText += ", " + availableExits[i];
                 }
-
             }
 
             // Add punctuation to end of output text

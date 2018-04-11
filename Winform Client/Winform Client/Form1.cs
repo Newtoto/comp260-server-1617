@@ -35,7 +35,7 @@ namespace Winform_Client
                 try
                 {
                     form.client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                    form.client.Connect(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8500));
+                    form.client.Connect(new IPEndPoint(IPAddress.Parse("138.68.161.95"), 8500));
                     form.bConnected = true;
                     form.AddText("Connected to server");
 
@@ -250,6 +250,11 @@ namespace Winform_Client
             {
                 myThread.Abort();
             }
+        }
+
+        private void textBox_Output_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

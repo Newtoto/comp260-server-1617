@@ -60,6 +60,7 @@
             this.textBox_Output.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textBox_Output.Size = new System.Drawing.Size(384, 235);
             this.textBox_Output.TabIndex = 3;
+            this.textBox_Output.TextChanged += new System.EventHandler(this.textBox_Output_TextChanged);
             // 
             // textBox_ClientName
             // 

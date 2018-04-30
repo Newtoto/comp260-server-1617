@@ -41,6 +41,17 @@ namespace Server
         // Create string for describing available exits
         private void GetAvailableExitsText()
         {
+			conn = new sqliteConnection("Data Source =" + "rooms.db" + ";Version=3;FailIfMissing=True");
+
+			try
+			{
+				conn.Open();
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine("Open existing DB failed: " + ex);
+			}
+
             List<String> availableExits = new List<String>();
             int numberOfExits = 0;
 

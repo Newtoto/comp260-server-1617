@@ -1,0 +1,16 @@
+﻿<Properties StartupConfiguration="{C2FCA6DD-9118-48EB-90D1-B3735AA0808A}|Default">
+  <MonoDevelop.Ide.Workbench ActiveDocument="WinformServer/SqliteCommands.cs">
+    <Files>
+      <File FileName="WinformServer/Dungeon.cs" Line="1" Column="1" />
+      <File FileName="WinformServer/Program.cs" Line="8" Column="26" />
+      <File FileName="WinformServer/SqliteCommands.cs" Line="7" Column="1" />
+      <File FileName="WinformServer/Room.cs" Line="5" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MultiItemStartupConfigurations />
+</Properties>

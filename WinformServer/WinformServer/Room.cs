@@ -4,10 +4,27 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+// Sqlite for databases
+#if TARGET_LINUX
+using Mono.Data.Sqlite;
+using sqliteConnection = Mono.Data.Sqlite.SqliteConnection;
+using sqliteCommand = Mono.Date.Sqlite.SqliteCommand;
+using sqliteDataReader = Mono.Date.Sqlite.SqliteDataReader;
+#endif
+
+//#if TARGET_WINDOWS
+using System.Data.SQLite;
+using sqliteConnection = System.Data.SQLite.SQLiteConnection;
+using sqliteCommand = System.Data.SQLite.SQLiteCommand;
+using sqliteDataReader = System.Data.SQLite.SQLiteDataReader;
+//#endif
+
 namespace Server
 {
     public class Room
     {
+        sqliteConnection conn = null;
+
         public String availableExitsText = "You can go ";
         // How other code references this room
         public int roomID;
@@ -41,7 +58,9 @@ namespace Server
         // Create string for describing available exits
         private void GetAvailableExitsText()
         {
-			conn = new sqliteConnection("Data Source =" + "rooms.db" + ";Version=3;FailIfMissing=True");
+            
+			
+            conn = new sqliteConnection("Data Source =" + "rooms.db" + ";Version=3;FailIfMissing=True");
 
 			try
 			{
@@ -51,6 +70,8 @@ namespace Server
 			{
 				Console.WriteLine("Open existing DB failed: " + ex);
 			}
+            
+            
 
             List<String> availableExits = new List<String>();
             int numberOfExits = 0;

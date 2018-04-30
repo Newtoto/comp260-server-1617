@@ -11,12 +11,12 @@ using System.IO;
 
 using MessageTypes;
 
-// Sqlite for databases
-#if TARGET_LINUX
-using Mono.Data.Sqlite;
-using sqliteConnection = Mono.Data.Sqlite.SqliteConnection;
-using sqliteCommand = Mono.Date.Sqlite.SqliteCommand;
-using sqliteDataReader = Mono.Date.Sqlite.SqliteDataReader;
+//#if TARGET_WINDOWS
+using System.Data.SQLite;
+using sqliteConnection = System.Data.SQLite.SQLiteConnection;
+using sqliteCommand = System.Data.SQLite.SQLiteCommand;
+using sqliteDataReader = System.Data.SQLite.SQLiteDataReader;
+//#endif
 
 namespace Server
 {
@@ -393,7 +393,7 @@ namespace Server
             Socket serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
 			// Server IP 138.68.161.95
-            serverSocket.Bind(new IPEndPoint(IPAddress.Parse("138.68.161.95"), 8500));
+            serverSocket.Bind(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8500));
             serverSocket.Listen(32);
 
             bool bQuit = false;

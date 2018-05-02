@@ -23,111 +23,58 @@ namespace Server
     public class Dungeon
     {        
         Dictionary<int, Room> roomMap;
-        sqliteConnection dbConnection = null;
+        sqliteConnection dungeonDbConnection = null;
+        SQLiteCommand dungeonCommand;
+        sqliteConnection playerDbConnection = null;
+        SQLiteCommand playerCommand;
+
 
         public void Init()
         {
             roomMap = new Dictionary<int, Room>();
 
-            OpenDungeonDataBase();
+            OpenPlayerAndDungeonDataBase();
 
-            SQLiteCommand command = new SQLiteCommand("select * from " + "rooms", dbConnection);
-            var reader = command.ExecuteReader();
-
-            while (reader.Read())
-            {
-                Console.WriteLine(reader[1]);
-            }
-
-
-            // Room 1
-            {
-                var room = new Room(1, "2,B,X,X", "Entrance Hall", "A large stone statue lies before you weilding a sword and shield. ");
-                roomMap.Add(room.roomID, room);
-            }
-
-            // Room 2
-            {
-                var room = new Room(2, "5,3,B,X", "Ballroom", "Feel free to stay and have a dance. ");
-                roomMap.Add(room.roomID, room);
-            }
-
-            // Room 3
-            {
-                var room = new Room(3, "X,8,4,B", "Dusty Corridor", "Suits of armour line the walls. ");
-                roomMap.Add(room.roomID, room);
-            }
-
-            // Room 4
-            {
-                var room = new Room(4, "B,X,X,1", "Taxidermy Room", "You feel like you're being watched. ");
-                roomMap.Add(room.roomID, room);
-            }
-
-            // Room 5
-            {
-                var room = new Room(5, "X,X,2,6", "Drawing Room", "Have a seat and play some games. ");
-                roomMap.Add(room.roomID, room);
-            }
-
-            // Room 6
-            {
-                var room = new Room(6, "7,5,X,X", "Spiral Staircase", "The stairs weave round from the drawing room, a suspicious door lies to the north at the bottom. ");
-                roomMap.Add(room.roomID, room);
-            }
-
-            // Room 7
-            {
-                var room = new Room(7, "X,X,6,X", "Furry Room", "Nothing to see here. ");
-                roomMap.Add(room.roomID, room);
-            }
-
-            // Room 8
-            {
-                var room = new Room(8, "9,X,X,3", "Armoury", "You would pick up a sword here, but you're too good for that. ");
-                roomMap.Add(room.roomID, room);
-            }
-
-            // Room 9
-            {
-                var room = new Room(9, "10,X,8,X", "Forge", "An assortment of tools are strewn about the room, likely used to make weapons and armour. ");
-                roomMap.Add(room.roomID, room);
-            }
-
-            // Room 10
-            {
-                var room = new Room(10, "X,X,9,11", "Training Room", "Test your skills on the dummies, dummy. ");
-                roomMap.Add(room.roomID, room);
-            }
-
-            // Room 11
-            {
-                var room = new Room(11, "X,10,X,X", "Storage Room", "There are lots and lots of boxes. ");
-                roomMap.Add(room.roomID, room);
-            }
+            dungeonCommand = new SQLiteCommand("select * from " + "Rooms", dungeonDbConnection);
+            playerCommand = new SQLiteCommand("select * from " + "PlayerInfo", playerDbConnection);
         }
 
         // Get and open database
-        private void OpenDungeonDataBase()
+        private void OpenPlayerAndDungeonDataBase()
         {
-            dbConnection = new sqliteConnection("Data Source =" + "dungeon.db" + ";Version=3;FailIfMissing=True");
+            dungeonDbConnection = new sqliteConnection("Data Source =" + "dungeon.db" + ";Version=3;FailIfMissing=True");
+            playerDbConnection = new sqliteConnection("Data Source =" + "players.db" + ";Version=3;FailIfMissing=True");
 
             try
             {
-                dbConnection.Open();
-                Console.WriteLine("opened db");
+                dungeonDbConnection.Open();
+                Console.WriteLine("opened dungeon db");
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Open existing DB failed: " + ex);
+                Console.WriteLine("Open dungeon DB failed: " + ex);
+            }
+
+            try
+            {
+                playerDbConnection.Open();
+                Console.WriteLine("opened player db");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Open player DB failed: " + ex);
             }
         }
 
         // Get the roomId of the room the player is in
-        public Room GetPlayerRoom(Player player)
+        public int GetPlayerRoom(int playerID)
         {
-            Room playerRoom;
-            roomMap.TryGetValue(player.currentRoomID, out playerRoom);
+            var reader = playerCommand.ExecuteReader();
+
+            while (reader.Read())
+            {
+                Console.WriteLine(reader["PlayerID"];
+            }
 
             return playerRoom;
         }

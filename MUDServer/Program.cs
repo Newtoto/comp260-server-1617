@@ -29,14 +29,15 @@ namespace Server
 {
     class Program
     {
-        static Dictionary<String, Player> clientDictionary = new Dictionary<String, Player>();
+        static Dictionary<int, Socket> playerSockets = new Dictionary<int, Socket>();
         static int clientID = 1;
-
 
         static void SendClientName(Socket s, String clientName)
         {
             ClientNameMsg nameMsg = new ClientNameMsg();
-            nameMsg.name = clientDictionary[clientName].userName;
+
+            // Get message name from sql query
+            nameMsg.name = "";
 
             MemoryStream outStream = nameMsg.WriteData();
 
@@ -47,73 +48,65 @@ namespace Server
         {
             ClientListMsg clientListMsg = new ClientListMsg();
 
-            lock (clientDictionary)
+            lock (playerSockets)
             {
-                foreach (KeyValuePair<String, Player> s in clientDictionary)
+                foreach (KeyValuePair<int, Socket> s in playerSockets)
                 {
-                    clientListMsg.clientList.Add(clientDictionary[s.Key].userName);
+                    // Get string username from query using s.Key and add
+                    string playerUserName = "temp";
+                    clientListMsg.clientList.Add(playerUserName);
                 }
 
                 MemoryStream outStream = clientListMsg.WriteData();
 
-                foreach (KeyValuePair<String, Player> s in clientDictionary)
+                foreach (KeyValuePair<int, Socket> s in playerSockets)
                 {
-                    s.Value.socket.Send(outStream.GetBuffer());
+                    s.Value.Send(outStream.GetBuffer());
                 }
             }
         }
 
+        // Send message to all users in the same room
         static void SendChatMessage(String msg)
         {
+            Console.WriteLine("Sending message to everyone");
+
+            // TODO PlayerDB SQL query to get player ID
+
+
+            // Create the message
             PublicChatMsg chatMsg = new PublicChatMsg();
-
             chatMsg.msg = msg;
-
             MemoryStream outStream = chatMsg.WriteData();
 
-            lock (clientDictionary)
-            {            
-                foreach (KeyValuePair<String, Player> s in clientDictionary)
-                {
-                    try
-                    {
-                        s.Value.socket.Send(outStream.GetBuffer());
-                    }
-                    catch (System.Exception)
-                    {
-                    	
-                    }                    
-                }
-            }
+            // TODO Send the message to player with ID
+            //Socket playerSocket;
+            //playerSocket.Value.socket.Send(outStream.GetBuffer());
+
         }
 
-        static void SendRoomChatMessage(String msg, Room room)
+        static void SendRoomChatMessage(String msg, int playerID)
         {
-            Console.WriteLine("Sending message to everyone in room " + room.name);
+            Console.WriteLine("Sending message to everyone in room.");
+
+            // TODO PlayerDB SQL query with current playerID to get room ID
+            int targetRoomID = 0;
+
+
+            // TODO Use targetRoomID to get all players with same roomID
+
+            // Create chat message
+            // TODO Use query with room ID to get name
+            string roomName = "";
 
             PublicChatMsg chatMsg = new PublicChatMsg();
-
-            chatMsg.msg = room.name + ": " + msg;
-
+            chatMsg.msg = roomName + ": " + msg;
             MemoryStream outStream = chatMsg.WriteData();
 
-            lock (clientDictionary)
-            {
-                foreach (KeyValuePair<String, Player> s in clientDictionary)
-                {
-                    if (s.Value.currentRoomID == room.roomID)
-                    {
-                        try
-                        {
-                            s.Value.socket.Send(outStream.GetBuffer());
-                        }
-                        catch (System.Exception)
-                        {
+            // Send the message to each player
+            //Socket playerSocket;
+            //playerSocket.Value.socket.Send(outStream.GetBuffer());
 
-                        }
-                    }
-                }
-            }
         }
 
         static void SendPrivateMessage(Socket s, String from, String msg)
@@ -133,28 +126,20 @@ namespace Server
             }
         }
 
-        static Socket GetSocketFromName(String name)
+        static Socket GetSocketFromPlayerID(int playerID)
         {
-            lock (clientDictionary)
+            lock (playerSockets)
             {
-                return clientDictionary[name].socket;
+                return playerSockets[playerID];
             }
         }
 
         static Socket GetSocketFromUsername(String username)
         {
-            lock (clientDictionary)
-            {
-                foreach (KeyValuePair<String, Player> o in clientDictionary)
-                {
-                    if (o.Value.userName == username)
-                    {
-                        return o.Value.socket;
-                    }
-                }
-            }
+            // TODO SQL Query to get username from ID
+            int playerID = 0;
 
-            return null;
+            return GetSocketFromPlayerID(playerID);
         }
 
         static bool UsernameTaken(String username)

@@ -206,7 +206,8 @@ namespace MessageTypes
     public class LoginAttempt : Msg
     {
         public const int ID = 6;
-        public String msg;
+        public String username;
+        public String password;
 
         public LoginAttempt() { mID = ID; }
 
@@ -216,7 +217,8 @@ namespace MessageTypes
             BinaryWriter write = new BinaryWriter(stream);
 
             write.Write(ID);
-            write.Write(msg);
+            write.Write(username);
+            write.Write(password);
 
             write.Close();
 
@@ -225,7 +227,7 @@ namespace MessageTypes
 
         public override void ReadData(BinaryReader read)
         {
-            msg = read.ReadString();
+            username = read.ReadString();
         }
     };
 }

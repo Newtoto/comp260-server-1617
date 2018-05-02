@@ -24,3 +24,16 @@ C:\Users\Andy\Documents\#UniWorld\comp260-server-1617\MUDClient\MUDClient\obj\De
 C:\Users\Andy\Documents\#UniWorld\comp260-server-1617\MUDClient\MUDClient\obj\Debug\MUDClient.csproj.CoreCompileInputs.cache
 C:\Users\Andy\Documents\#UniWorld\comp260-server-1617\MUDClient\MUDClient\obj\Debug\MUDClient.exe
 C:\Users\Andy\Documents\#UniWorld\comp260-server-1617\MUDClient\MUDClient\obj\Debug\MUDClient.pdb
+C:\Users\af187249\Downloads\comp260-server-1617\MUDClient\MUDClient\bin\Debug\MUDClient.exe.config
+C:\Users\af187249\Downloads\comp260-server-1617\MUDClient\MUDClient\bin\Debug\MUDClient.exe
+C:\Users\af187249\Downloads\comp260-server-1617\MUDClient\MUDClient\bin\Debug\MUDClient.pdb
+C:\Users\af187249\Downloads\comp260-server-1617\MUDClient\MUDClient\bin\Debug\MetroFramework.Design.dll
+C:\Users\af187249\Downloads\comp260-server-1617\MUDClient\MUDClient\bin\Debug\MetroFramework.dll
+C:\Users\af187249\Downloads\comp260-server-1617\MUDClient\MUDClient\bin\Debug\MetroFramework.Fonts.dll
+C:\Users\af187249\Downloads\comp260-server-1617\MUDClient\MUDClient\obj\Debug\MUDClient.csprojResolveAssemblyReference.cache
+C:\Users\af187249\Downloads\comp260-server-1617\MUDClient\MUDClient\obj\Debug\MUDClient.Mud.resources
+C:\Users\af187249\Downloads\comp260-server-1617\MUDClient\MUDClient\obj\Debug\MUDClient.Properties.Resources.resources
+C:\Users\af187249\Downloads\comp260-server-1617\MUDClient\MUDClient\obj\Debug\MUDClient.csproj.GenerateResource.Cache
+C:\Users\af187249\Downloads\comp260-server-1617\MUDClient\MUDClient\obj\Debug\MUDClient.csproj.CoreCompileInputs.cache
+C:\Users\af187249\Downloads\comp260-server-1617\MUDClient\MUDClient\obj\Debug\MUDClient.exe
+C:\Users\af187249\Downloads\comp260-server-1617\MUDClient\MUDClient\obj\Debug\MUDClient.pdb

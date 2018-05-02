@@ -4,15 +4,42 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 
+#if TARGET_LINUX
+using Mono.Data.Sqlite;
+using sqliteConnection 	=Mono.Data.Sqlite.SqliteConnection;
+using sqliteCommand 	=Mono.Data.Sqlite.SqliteCommand;
+using sqliteDataReader	=Mono.Data.Sqlite.SqliteDataReader;
+#endif
+
+#if TARGET_WINDOWS
+using System.Data.SQLite;
+using sqliteConnection = System.Data.SQLite.SQLiteConnection;
+using sqliteCommand = System.Data.SQLite.SQLiteCommand;
+using sqliteDataReader = System.Data.SQLite.SQLiteDataReader;
+#endif
+
 namespace Server
 {
     public class Dungeon
     {        
         Dictionary<int, Room> roomMap;
+        sqliteConnection dbConnection = null;
 
         public void Init()
         {
             roomMap = new Dictionary<int, Room>();
+
+            OpenDungeonDataBase();
+
+            SQLiteCommand command = new SQLiteCommand("select * from " + "rooms", dbConnection);
+            var reader = command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                Console.WriteLine(reader[1]);
+            }
+
+
             // Room 1
             {
                 var room = new Room(1, "2,B,X,X", "Entrance Hall", "A large stone statue lies before you weilding a sword and shield. ");
@@ -77,6 +104,22 @@ namespace Server
             {
                 var room = new Room(11, "X,10,X,X", "Storage Room", "There are lots and lots of boxes. ");
                 roomMap.Add(room.roomID, room);
+            }
+        }
+
+        // Get and open database
+        private void OpenDungeonDataBase()
+        {
+            dbConnection = new sqliteConnection("Data Source =" + "dungeon.db" + ";Version=3;FailIfMissing=True");
+
+            try
+            {
+                dbConnection.Open();
+                Console.WriteLine("opened db");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Open existing DB failed: " + ex);
             }
         }
 

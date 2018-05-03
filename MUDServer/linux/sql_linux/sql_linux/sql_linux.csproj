@@ -39,6 +39,27 @@
     <Compile Include="..\..\..\sql_example.cs">
       <Link>sql_example.cs</Link>
     </Compile>
+    <Compile Include="..\..\..\Dungeon.cs">
+      <Link>Dungeon.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\DungeonDbManager.cs">
+      <Link>DungeonDbManager.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\MessageTypes.cs">
+      <Link>MessageTypes.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Player.cs">
+      <Link>Player.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\PlayerDbManager.cs">
+      <Link>PlayerDbManager.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Program.cs">
+      <Link>Program.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Room.cs">
+      <Link>Room.cs</Link>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

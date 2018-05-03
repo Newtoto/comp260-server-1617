@@ -1,0 +1,6 @@
+/home/andrew/Documents/comp260-server-1617/MUDServer/linux/sql_linux/sql_linux/obj/x86/Debug/sql_linux.csprojResolveAssemblyReference.cache
+/home/andrew/Documents/comp260-server-1617/MUDServer/linux/sql_linux/sql_linux/obj/x86/Debug/sql_linux.csproj.CoreCompileInputs.cache
+/home/andrew/Documents/comp260-server-1617/MUDServer/linux/sql_linux/sql_linux/bin/Debug/sql_linux.exe
+/home/andrew/Documents/comp260-server-1617/MUDServer/linux/sql_linux/sql_linux/bin/Debug/sql_linux.pdb
+/home/andrew/Documents/comp260-server-1617/MUDServer/linux/sql_linux/sql_linux/obj/x86/Debug/sql_linux.exe
+/home/andrew/Documents/comp260-server-1617/MUDServer/linux/sql_linux/sql_linux/obj/x86/Debug/sql_linux.pdb

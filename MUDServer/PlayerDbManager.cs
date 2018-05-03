@@ -23,9 +23,9 @@ namespace Server
     class PlayerDbManager
     {
         sqliteConnection playerDbConnection = null;
-        SQLiteCommand playerCommand;
+		sqliteCommand playerCommand;
         sqliteConnection userDbConnection = null;
-        SQLiteCommand userCommand;
+		sqliteCommand userCommand;
 
         public PlayerDbManager()
         {
@@ -63,7 +63,7 @@ namespace Server
         // Get the roomId of the room the player is in
         public int GetPlayerRoom(int playerID)
         {
-            playerCommand = new SQLiteCommand("select CurrentRoom from " + "PlayerInfo", playerDbConnection);
+			playerCommand = new sqliteCommand("select CurrentRoom from " + "PlayerInfo", playerDbConnection);
 
             var reader = playerCommand.ExecuteReader();
 
@@ -77,7 +77,7 @@ namespace Server
 
         public int LoginUser(string username, string password)
         {
-            userCommand = new SQLiteCommand("select Password from Users where Username ='" + username + "'", userDbConnection);
+			userCommand = new sqliteCommand("select Password from Users where Username ='" + username + "'", userDbConnection);
 
             var reader = userCommand.ExecuteReader();
 
@@ -87,7 +87,7 @@ namespace Server
                 {
                     Console.WriteLine(reader[0]);
                     // Get and return player ID
-                    userCommand = new SQLiteCommand("select PlayerID from Users where Username ='" + username + "'", userDbConnection);
+					userCommand = new sqliteCommand("select PlayerID from Users where Username ='" + username + "'", userDbConnection);
                     reader = userCommand.ExecuteReader();
 
                     while (reader.Read())
@@ -102,7 +102,7 @@ namespace Server
 
         public int CreateUser(string username, string password)
         {
-            userCommand = new SQLiteCommand("select Username from " + "Users", userDbConnection);
+			userCommand = new sqliteCommand("select Username from " + "Users", userDbConnection);
 
             var reader = userCommand.ExecuteReader();
 

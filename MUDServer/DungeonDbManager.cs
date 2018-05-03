@@ -23,7 +23,7 @@ namespace Server
     class DungeonDbManager
     {
         sqliteConnection dungeonDbConnection = null;
-        SQLiteCommand dungeonCommand;
+		sqliteCommand dungeonCommand;
 
         // Get and open database
         private void OpenDungeonDatabase()

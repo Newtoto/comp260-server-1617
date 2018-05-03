@@ -24,9 +24,9 @@ namespace Server
     {        
         Dictionary<int, Room> roomMap;
         sqliteConnection dungeonDbConnection = null;
-        SQLiteCommand dungeonCommand;
+		sqliteCommand dungeonCommand;
         sqliteConnection playerDbConnection = null;
-        SQLiteCommand playerCommand;
+		sqliteCommand playerCommand;
 
 
         public void Init()
@@ -35,8 +35,8 @@ namespace Server
 
             OpenPlayerAndDungeonDataBase();
 
-            dungeonCommand = new SQLiteCommand("select * from " + "Rooms", dungeonDbConnection);
-            playerCommand = new SQLiteCommand("select * from " + "PlayerInfo", playerDbConnection);
+			dungeonCommand = new sqliteCommand("select * from " + "Rooms", dungeonDbConnection);
+			playerCommand = new sqliteCommand("select * from " + "PlayerInfo", playerDbConnection);
         }
 
         // Get and open database

@@ -67,7 +67,8 @@ namespace MUDClient
                 }
                 catch (System.Exception)
                 {
-                    form.AddText("No server!");
+                    form.AddError("No server available");
+                    //form.AddText("No server");
                     Thread.Sleep(1000);
                 }
             }

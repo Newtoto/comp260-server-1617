@@ -1,0 +1,118 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading;
+
+#if TARGET_LINUX
+using Mono.Data.Sqlite;
+using sqliteConnection 	=Mono.Data.Sqlite.SqliteConnection;
+using sqliteCommand 	=Mono.Data.Sqlite.SqliteCommand;
+using sqliteDataReader	=Mono.Data.Sqlite.SqliteDataReader;
+#endif
+
+#if TARGET_WINDOWS
+using System.Data.SQLite;
+using sqliteConnection = System.Data.SQLite.SQLiteConnection;
+using sqliteCommand = System.Data.SQLite.SQLiteCommand;
+using sqliteDataReader = System.Data.SQLite.SQLiteDataReader;
+#endif
+
+namespace Server
+{
+    class PlayerDbManager
+    {
+        sqliteConnection playerDbConnection = null;
+        SQLiteCommand playerCommand;
+        sqliteConnection userDbConnection = null;
+        SQLiteCommand userCommand;
+
+        public PlayerDbManager()
+        {
+            OpenDungeonDatabase();
+        }
+
+        // Get and open database
+        private void OpenDungeonDatabase()
+        {
+            // Link databases
+            playerDbConnection = new sqliteConnection("Data Source =" + "players.db" + ";Version=3;FailIfMissing=True");
+            userDbConnection = new sqliteConnection("Data Source =" + "users.db" + ";Version=3;FailIfMissing=True");
+
+            try
+            {
+                playerDbConnection.Open();
+                Console.WriteLine("opened player db");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Open player DB failed: " + ex);
+            }
+
+            try
+            {
+                userDbConnection.Open();
+                Console.WriteLine("opened user db");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Open user DB failed: " + ex);
+            }
+        }
+
+        // Get the roomId of the room the player is in
+        public int GetPlayerRoom(int playerID)
+        {
+            playerCommand = new SQLiteCommand("select CurrentRoom from " + "PlayerInfo", playerDbConnection);
+
+            var reader = playerCommand.ExecuteReader();
+
+            while (reader.Read())
+            {
+                Console.WriteLine(reader["PlayerID"]);
+            }
+
+            return 0;
+        }
+
+        public int LoginUser(string username, string password)
+        {
+            userCommand = new SQLiteCommand("select Password from Users where Username ='" + username + "'", userDbConnection);
+
+            var reader = userCommand.ExecuteReader();
+
+            while (reader.Read())
+            {
+                if (reader[0].ToString() == password)
+                {
+                    Console.WriteLine(reader[0]);
+                    // Get and return player ID
+                    userCommand = new SQLiteCommand("select PlayerID from Users where Username ='" + username + "'", userDbConnection);
+                    reader = userCommand.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        return int.Parse(string.Format("{0}", reader[0]));
+                    }
+                }
+            }
+            // Return failed login
+            return 0;
+        }
+
+        public int CreateUser(string username, string password)
+        {
+            userCommand = new SQLiteCommand("select Username from " + "Users", userDbConnection);
+
+            var reader = userCommand.ExecuteReader();
+
+            while (reader.Read())
+            {
+                Console.WriteLine(reader[0]);
+            }
+
+            // Return failed sign up
+            return 0;
+        }
+    }
+}

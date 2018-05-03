@@ -73,74 +73,75 @@ namespace Server
 
             while (reader.Read())
             {
-                Console.WriteLine(reader["PlayerID"];
+                Console.WriteLine(reader["PlayerID"]);
             }
 
-            return playerRoom;
+            return 0;
         }
 
         // Try to move the player in direction and return 1, if not return 0
         public int MovePlayer(Player player, String direction)
         {
             // Get the room the player is trying to move from
-            Room currentRoom = GetPlayerRoom(player);
+            //Room currentRoom = GetPlayerRoom(player);
 
-            if (direction == "north")
-            {
-                // check north
-                if(currentRoom.north != "X" && currentRoom.north != "B")
-                {
-                    // Update player room to new room
-                    player.currentRoomID = Int32.Parse(currentRoom.north);
-                    return 1;
-                }
-                else
-                {
-                    return 0;
-                }
-            }
-            else if (direction == "east")
-            {
-                // check east
-                if (currentRoom.east != "X" && currentRoom.east != "B")
-                {
-                    // Update player room to new room
-                    player.currentRoomID = Int32.Parse(currentRoom.east);
-                    return 1;
-                }
-                else
-                {
-                    return 0;
-                }
-            }
-            else if (direction == "south")
-            {
-                // check south
-                if (currentRoom.south != "X" && currentRoom.south != "B")
-                {
-                    // Update player room to new room
-                    player.currentRoomID = Int32.Parse(currentRoom.south);
-                    return 1;
-                }
-                else
-                {
-                    return 0;
-                }
-            }
-            else
-            {
-                // check west
-                if (currentRoom.west != "X" && currentRoom.west != "B")
-                {
-                    // Update player room to new room
-                    player.currentRoomID = Int32.Parse(currentRoom.west);
-                    return 1;
-                }
-                else
-                {
-                    return 0;
-                }
-            }
+            //if (direction == "north")
+            //{
+            //    // check north
+            //    if(currentRoom.north != "X" && currentRoom.north != "B")
+            //    {
+            //        // Update player room to new room
+            //        player.currentRoomID = Int32.Parse(currentRoom.north);
+            //        return 1;
+            //    }
+            //    else
+            //    {
+            //        return 0;
+            //    }
+            //}
+            //else if (direction == "east")
+            //{
+            //    // check east
+            //    if (currentRoom.east != "X" && currentRoom.east != "B")
+            //    {
+            //        // Update player room to new room
+            //        player.currentRoomID = Int32.Parse(currentRoom.east);
+            //        return 1;
+            //    }
+            //    else
+            //    {
+            //        return 0;
+            //    }
+            //}
+            //else if (direction == "south")
+            //{
+            //    // check south
+            //    if (currentRoom.south != "X" && currentRoom.south != "B")
+            //    {
+            //        // Update player room to new room
+            //        player.currentRoomID = Int32.Parse(currentRoom.south);
+            //        return 1;
+            //    }
+            //    else
+            //    {
+            //        return 0;
+            //    }
+            //}
+            //else
+            //{
+            //    // check west
+            //    if (currentRoom.west != "X" && currentRoom.west != "B")
+            //    {
+            //        // Update player room to new room
+            //        player.currentRoomID = Int32.Parse(currentRoom.west);
+            //        return 1;
+            //    }
+            //    else
+            //    {
+            //        return 0;
+            //    }
+            //}
+            return 0;
         }
 
         // Take players message and get run appropriate commands if available
@@ -195,12 +196,12 @@ namespace Server
                             msg = "You cannot go " + option + ".\n";
                         }
 
-                        Room currentRoom = GetPlayerRoom(player);
-                        string roomNameText = "You find yourself in the " + currentRoom.name + ". ";
-                        string roomDescriptionText = currentRoom.desc;
-                        // Get direction options
-                        string directions = currentRoom.availableExitsText;
-                        msg += roomNameText + roomDescriptionText + directions;
+                        //Room currentRoom = GetPlayerRoom(player);
+                        //string roomNameText = "You find yourself in the " + currentRoom.name + ". ";
+                        //string roomDescriptionText = currentRoom.desc;
+                        //// Get direction options
+                        //string directions = currentRoom.availableExitsText;
+                       // msg += roomNameText + roomDescriptionText + directions;
                     }
                     else
                     {

@@ -21,5 +21,4 @@ namespace Server
         public int currentRoomID = 1;
         public Socket socket;
     }
-
 }

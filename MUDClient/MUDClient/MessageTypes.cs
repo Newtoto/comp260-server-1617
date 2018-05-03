@@ -43,6 +43,18 @@ namespace MessageTypes
                     m = new DungeonNavigationMsg();
                     break;
 
+                case LoginAttempt.ID:
+                    m = new LoginAttempt();
+                    break;
+
+                case SignUpAttempt.ID:
+                    m = new SignUpAttempt();
+                    break;
+
+                case LoginSuccessMsg.ID:
+                    m = new LoginSuccessMsg();
+                    break;
+
                 default:
                     throw (new Exception());
             }
@@ -206,9 +218,67 @@ namespace MessageTypes
     public class LoginAttempt : Msg
     {
         public const int ID = 6;
-        public String msg;
+        public String username;
+        public String password;
 
         public LoginAttempt() { mID = ID; }
+
+        public override MemoryStream WriteData()
+        {
+            MemoryStream stream = new MemoryStream();
+            BinaryWriter write = new BinaryWriter(stream);
+
+            write.Write(ID);
+            write.Write(username);
+            write.Write(password);
+
+            write.Close();
+
+            return stream;
+        }
+
+        public override void ReadData(BinaryReader read)
+        {
+            username = read.ReadString();
+            password = read.ReadString();
+        }
+    };
+
+    public class SignUpAttempt : Msg
+    {
+        public const int ID = 7;
+        public String username;
+        public String password;
+
+        public SignUpAttempt() { mID = ID; }
+
+        public override MemoryStream WriteData()
+        {
+            MemoryStream stream = new MemoryStream();
+            BinaryWriter write = new BinaryWriter(stream);
+
+            write.Write(ID);
+            write.Write(username);
+            write.Write(password);
+
+            write.Close();
+
+            return stream;
+        }
+
+        public override void ReadData(BinaryReader read)
+        {
+            username = read.ReadString();
+            password = read.ReadString();
+        }
+    };
+
+    public class LoginSuccessMsg : Msg
+    {
+        public const int ID = 8;
+        public String msg;
+
+        public LoginSuccessMsg() { mID = ID; }
 
         public override MemoryStream WriteData()
         {

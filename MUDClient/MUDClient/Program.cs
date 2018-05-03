@@ -18,5 +18,6 @@ namespace MUDClient
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Mud());
         }
+
     }
 }

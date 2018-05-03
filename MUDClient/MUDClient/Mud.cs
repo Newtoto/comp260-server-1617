@@ -26,7 +26,12 @@ namespace MUDClient
         bool bQuit = false;
         bool bConnected = false;
 
+        // Used to control panels
+        bool loggedIn = false;
+
         List<String> currentClientList = new List<String>();
+
+
 
         // Connect cilent to server
         static void clientProcess(Object o)
@@ -90,7 +95,7 @@ namespace MUDClient
 
                         if (m != null)
                         {
-                            Console.Write("Got a message: ");
+                            Console.WriteLine("Got a message: " + m.mID);
                             switch (m.mID)
                             {
                                 case PublicChatMsg.ID:
@@ -123,7 +128,23 @@ namespace MUDClient
                                         form.SetClientName(clientName.name);
                                     }
                                     break;
+                                case LoginSuccessMsg.ID:
+                                    {
+                                        Console.WriteLine("Login");
+                                        LoginSuccessMsg loginMsg = (LoginSuccessMsg)m;
 
+                                        if (loginMsg.msg == "success")
+                                        {
+                                            Console.WriteLine("Login success, enabling mud panel");
+                                            form.EnableMud();
+                                            //form.AddError("Success");
+                                        }
+                                        else
+                                        {
+                                            form.AddError("Login failed.");
+                                        }
+                                    }
+                                    break;
                                 default:
                                     break;
                             }
@@ -144,6 +165,8 @@ namespace MUDClient
         public Mud()
         {
             InitializeComponent();
+
+            mudPanel.Visible = false;
 
             myThread = new Thread(clientProcess);
             myThread.Start(this);
@@ -256,8 +279,6 @@ namespace MUDClient
             }
         }
 
-        // } WINFORM FUNCTIONS
-
         // Send text input
         private void sendButton_Click(object sender, EventArgs e)
         {
@@ -294,6 +315,45 @@ namespace MUDClient
             }
         }
 
+        private delegate void AddErrorDelegate(String s);
+        // Add to main output text box
+        private void AddError(String s)
+        {
+            if (errorDisplay.InvokeRequired)
+            {
+                Invoke(new AddErrorDelegate(AddError), new object[] { s });
+            }
+            else
+            {
+                errorDisplay.Text = s;
+            }
+        }
+
+        private delegate void EnableMudDelegate();
+        // Add to main output text box
+        private void EnableMud()
+        {
+            if (loginPanel.InvokeRequired)
+            {
+                Invoke(new EnableMudDelegate(EnableMud));
+            }
+            else
+            {
+                loginPanel.Visible = false;
+            }
+
+            if (mudPanel.InvokeRequired)
+            {
+                Invoke(new EnableMudDelegate(EnableMud));
+            }
+            else
+            {
+                mudPanel.Visible = true;
+            }
+        }
+
+        // } WINFORM FUNCTIONS
+
         private void OnExit()
         {
             bQuit = true;
@@ -308,5 +368,77 @@ namespace MUDClient
         {
 
         }
+
+        // Logging in stuff
+
+        // Sends navigation message to server
+        private void createLoginMessageFromStrings(String userName, String password, String loginType)
+        {
+            // Check for server connection
+            if (bConnected)
+            {
+                try
+                {
+                    if (loginType == "login")
+                    {
+                        // Create login message
+                        LoginAttempt loginMessage = new LoginAttempt();
+                        loginMessage.username = userName;
+                        loginMessage.password = password;
+
+                        MemoryStream outStream = loginMessage.WriteData();
+                        client.Send(outStream.GetBuffer());
+                    }
+                    else
+                    {
+                        // Create sign up message
+                        SignUpAttempt signUpMessage = new SignUpAttempt();
+                        signUpMessage.username = userName;
+                        signUpMessage.password = password;
+
+                        MemoryStream outStream = signUpMessage.WriteData();
+                        client.Send(outStream.GetBuffer());
+                    }
+                }
+                catch (System.Exception)
+                {
+                }
+            }
+            else
+            {
+                // Show no network message
+                errorDisplay.Text = "No network connected.";
+            }
+
+        }
+
+        private void loginButton_Click(object sender, EventArgs e)
+        {
+            if (usernameInput.Text.Length > 0 && passwordInput.Text.Length > 0)
+            {
+                errorDisplay.Text = "";
+                createLoginMessageFromStrings(usernameInput.Text, passwordInput.Text, "login");
+            }
+            else
+            {
+                // Display error message
+                errorDisplay.Text = "Username and password fields must be filled.";
+            }
+        }
+
+        private void signUpButton_Click(object sender, EventArgs e)
+        {
+            if (usernameInput.Text.Length > 0 && passwordInput.Text.Length > 0)
+            {
+                errorDisplay.Text = "";
+                createLoginMessageFromStrings(usernameInput.Text, passwordInput.Text, "sign up");
+            }
+            else
+            {
+                // Display error message
+                errorDisplay.Text = "Username and password fields must be filled.";
+            }
+        }
+
     }
 }

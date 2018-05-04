@@ -580,14 +580,21 @@ namespace MUDClient
 
         private void selectPlayer_Click(object sender, EventArgs e)
         {
-            // Create character select message
-            CharacterSelectionMsg characterSelection = new CharacterSelectionMsg();
-            characterSelection.msg = availableCharacters.SelectedValue.ToString();
+            try
+            {
+                // Create character select message
+                CharacterSelectionMsg characterSelection = new CharacterSelectionMsg();
+                characterSelection.msg = availableCharacters.SelectedValue.ToString();
 
-            MemoryStream outStream = characterSelection.WriteData();
-            client.Send(outStream.GetBuffer());
+                MemoryStream outStream = characterSelection.WriteData();
+                client.Send(outStream.GetBuffer());
 
-            Console.WriteLine("Select Player: " + availableCharacters.SelectedValue);
+                Console.WriteLine("Select Player: " + availableCharacters.SelectedValue);
+            }
+            catch
+            {
+                Console.WriteLine("No player selected");
+            }
         }
     }
 }

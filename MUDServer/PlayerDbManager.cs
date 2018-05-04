@@ -142,12 +142,38 @@ namespace Server
 
         public void CreateNewUser(String username, String password)
         {
+            userCommand = new sqliteCommand("select PlayerID from Users", userDbConnection);
+            int largestPlayerID = 0;
+            var reader = userCommand.ExecuteReader();
+
+            while (reader.Read())
+            {
+                try
+                {
+                    int currentInt = int.Parse(string.Format("{0}", reader[0]));
+
+                    if (currentInt > largestPlayerID)
+                    {
+                        largestPlayerID = currentInt;
+                    }
+                }
+                catch
+                {
+                    // PlayerID isn't set for some reason in db
+                }
+            }
+
+            // Set largestPlayerID to 1 more than highest ID
+            largestPlayerID += 1;
+
             try
             {
-                var sql = "insert into " + "Users" + " (Username, Password) values ";
+                var sql = "insert into " + "Users" + " (Username, Password, PlayerID) values ";
                 sql += "('" + username + "'";
                 sql += ",";
                 sql += "'" + password + "'";
+                sql += ",";
+                sql += "'" + largestPlayerID + "'";
                 sql += ")";
 
                 userCommand = new sqliteCommand(sql, userDbConnection);

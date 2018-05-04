@@ -176,7 +176,8 @@ namespace MUDClient
                                                     else
                                                     {
                                                         // Failed character select (this shouldn't happen unless someone is hacking)
-                                                        MessageBox.Show("Something has gone wrong, please restart your client");
+                                                        MessageBox.Show("Hacking detected, closing application", "Hacker alert", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
+                                                        Application.Exit();
                                                     }
                                                 }
                                                 break;
@@ -351,6 +352,8 @@ namespace MUDClient
             {
                 availableCharacters.DataSource = null;
                 characterSelectionList.Clear();
+                // Debugging hacking into other characters
+                //characterSelectionList.Add("TheDestroyer");
 
                 foreach (String s in characterList.characterList)
                 {

@@ -30,7 +30,7 @@ namespace MUDClient
         bool loggedIn = false;
 
         List<String> currentClientList = new List<String>();
-
+        List<String> characterSelectionList = new List<String>();
 
 
         // Connect cilent to server
@@ -45,7 +45,7 @@ namespace MUDClient
                 {
                     form.client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                     // Server IP 138.68.161.95, test 127.0.0.1
-                    form.client.Connect(new IPEndPoint(IPAddress.Parse("138.68.161.95"), 8500));
+                    form.client.Connect(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8500));
                     form.bConnected = true;
                     form.AddText("Connected to server");
 
@@ -129,21 +129,39 @@ namespace MUDClient
                                         form.SetClientName(clientName.name);
                                     }
                                     break;
-                                case LoginSuccessMsg.ID:
+
+                                case LoginStateMsg.ID:
                                     {
                                         Console.WriteLine("Login");
-                                        LoginSuccessMsg loginMsg = (LoginSuccessMsg)m;
+                                        LoginStateMsg loginMsg = (LoginStateMsg)m;
 
                                         if (loginMsg.msg == "success")
                                         {
-                                            Console.WriteLine("Login success, enabling mud panel");
-                                            form.EnableMud();
+                                            Console.WriteLine("Login success, enabling player select panel");
+                                            form.EnablePlayerSelect();
                                             //form.AddError("Success");
                                         }
                                         else
                                         {
-                                            form.AddError("Login failed.");
+                                            // Login attempt feedback
+                                            if(loginMsg.type == "login")
+                                            {
+                                                form.AddError("Incorrect username or password.");
+                                            }
+                                            // Sign up attempt feedback
+                                            else
+                                            {
+                                                form.AddError("Username already in use.");
+                                            }
                                         }
+                                    }
+                                    break;
+
+                                case CharacterListMsg.ID:
+                                    {
+                                        CharacterListMsg characterList = (CharacterListMsg)m;
+
+                                        form.SetCharacterList(characterList);
                                     }
                                     break;
                                 default:
@@ -167,6 +185,7 @@ namespace MUDClient
         {
             InitializeComponent();
 
+            playerSelectPanel.Visible = false;
             mudPanel.Visible = false;
 
             myThread = new Thread(clientProcess);
@@ -280,6 +299,26 @@ namespace MUDClient
             }
         }
 
+        private delegate void SetCharacterListDelegate(CharacterListMsg characterList);
+        private void SetCharacterList(CharacterListMsg characterList)
+        {
+            if (this.InvokeRequired)
+            {
+                Invoke(new SetCharacterListDelegate(SetCharacterList), new object[] { characterList });
+            }
+            else
+            {
+                availableCharacters.DataSource = null;
+                characterSelectionList.Clear();
+
+                foreach (String s in characterList.characterList)
+                {
+                    currentClientList.Add(s);
+                }
+                availableCharacters.DataSource = currentClientList;
+            }
+        }
+
         // Send text input
         private void sendButton_Click(object sender, EventArgs e)
         {
@@ -330,6 +369,39 @@ namespace MUDClient
             }
         }
 
+
+        private delegate void EnablePlayerSelectDelegate();
+        // Add to main output text box
+        private void EnablePlayerSelect()
+        {
+            if (loginPanel.InvokeRequired)
+            {
+                Invoke(new EnablePlayerSelectDelegate(EnablePlayerSelect));
+            }
+            else
+            {
+                loginPanel.Visible = false;
+            }
+
+            if (playerSelectPanel.InvokeRequired)
+            {
+                Invoke(new EnablePlayerSelectDelegate(EnablePlayerSelect));
+            }
+            else
+            {
+                playerSelectPanel.Visible = true;
+            }
+
+            if (mudPanel.InvokeRequired)
+            {
+                Invoke(new EnablePlayerSelectDelegate(EnablePlayerSelect));
+            }
+            else
+            {
+                mudPanel.Visible = false;
+            }
+        }
+
         private delegate void EnableMudDelegate();
         // Add to main output text box
         private void EnableMud()
@@ -341,6 +413,15 @@ namespace MUDClient
             else
             {
                 loginPanel.Visible = false;
+            }
+
+            if (playerSelectPanel.InvokeRequired)
+            {
+                Invoke(new EnableMudDelegate(EnableMud));
+            }
+            else
+            {
+                playerSelectPanel.Visible = true;
             }
 
             if (mudPanel.InvokeRequired)
@@ -441,5 +522,24 @@ namespace MUDClient
             }
         }
 
+        private void displayNameInput_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void createPlayer_Click(object sender, EventArgs e)
+        {
+            Console.WriteLine("Create Player");
+        }
+
+        private void selectPlayer_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void selectPlayer_Click(object sender, EventArgs e)
+        {
+            Console.WriteLine("Select Player");
+        }
     }
 }

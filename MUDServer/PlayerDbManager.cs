@@ -114,5 +114,29 @@ namespace Server
             // Return failed sign up
             return 0;
         }
+
+        public bool CheckForExistingUsername(string username)
+        {
+            userCommand = new sqliteCommand("select * from Users where Username ='" + username + "'", userDbConnection);
+
+            var reader = userCommand.ExecuteReader();
+
+            return reader.Read();
+        }
+
+        public String GetPlayerUserName(int playerID)
+        {
+            playerCommand = new sqliteCommand("select Name from PlayerInfo where Owner ='" + playerID + "'", playerDbConnection);
+
+            var reader = playerCommand.ExecuteReader();
+
+            while (reader.Read())
+            {
+                Console.WriteLine(reader[0]);
+                return reader[0].ToString();
+            }
+
+            return "";
+        }
     }
 }

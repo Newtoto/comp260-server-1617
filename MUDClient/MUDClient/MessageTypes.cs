@@ -51,8 +51,20 @@ namespace MessageTypes
                     m = new SignUpAttempt();
                     break;
 
-                case LoginSuccessMsg.ID:
-                    m = new LoginSuccessMsg();
+                case LoginStateMsg.ID:
+                    m = new LoginStateMsg();
+                    break;
+
+                case CharacterSelectionMsg.ID:
+                    m = new CharacterSelectionMsg();
+                    break;
+
+                case CharacterCreationMsg.ID:
+                    m = new CharacterCreationMsg();
+                    break;
+
+                case CharacterListMsg.ID:
+                    m = new CharacterListMsg();
                     break;
 
                 default:
@@ -273,12 +285,13 @@ namespace MessageTypes
         }
     };
 
-    public class LoginSuccessMsg : Msg
+    public class LoginStateMsg : Msg
     {
         public const int ID = 8;
+        public String type;
         public String msg;
 
-        public LoginSuccessMsg() { mID = ID; }
+        public LoginStateMsg() { mID = ID; }
 
         public override MemoryStream WriteData()
         {
@@ -286,6 +299,7 @@ namespace MessageTypes
             BinaryWriter write = new BinaryWriter(stream);
 
             write.Write(ID);
+            write.Write(type);
             write.Write(msg);
 
             write.Close();
@@ -295,7 +309,104 @@ namespace MessageTypes
 
         public override void ReadData(BinaryReader read)
         {
+            type = read.ReadString();
             msg = read.ReadString();
+        }
+    };
+
+    public class CharacterSelectionMsg : Msg
+    {
+        public const int ID = 9;
+        public String msg;
+        public int playerID;
+
+        public CharacterSelectionMsg() { mID = ID; }
+
+        public override MemoryStream WriteData()
+        {
+            MemoryStream stream = new MemoryStream();
+            BinaryWriter write = new BinaryWriter(stream);
+
+            write.Write(ID);
+            write.Write(msg);
+            write.Write(playerID);
+
+            write.Close();
+
+            return stream;
+        }
+
+        public override void ReadData(BinaryReader read)
+        {
+            msg = read.ReadString();
+            playerID = read.ReadInt32();
+        }
+    };
+
+    public class CharacterCreationMsg : Msg
+    {
+        public const int ID = 10;
+        public String playerName;
+
+        public CharacterCreationMsg() { mID = ID; }
+
+        public override MemoryStream WriteData()
+        {
+            MemoryStream stream = new MemoryStream();
+            BinaryWriter write = new BinaryWriter(stream);
+
+            write.Write(ID);
+            write.Write(playerName);
+
+            write.Close();
+
+            return stream;
+        }
+
+        public override void ReadData(BinaryReader read)
+        {
+            playerName = read.ReadString();
+        }
+    };
+
+    public class CharacterListMsg : Msg
+    {
+        public const int ID = 11;
+        public List<String> characterList;
+
+        public CharacterListMsg()
+        {
+            mID = ID;
+
+            characterList = new List<String>();
+        }
+        public override MemoryStream WriteData()
+        {
+
+            MemoryStream stream = new MemoryStream();
+            BinaryWriter write = new BinaryWriter(stream);
+
+            write.Write(ID);
+            write.Write(characterList.Count);
+            foreach (String s in characterList)
+            {
+                write.Write(s);
+            }
+
+            write.Close();
+
+            return stream;
+        }
+        public override void ReadData(BinaryReader read)
+        {
+            int count = read.ReadInt32();
+
+            characterList.Clear();
+
+            for (int i = 0; i < count; i++)
+            {
+                characterList.Add(read.ReadString());
+            }
         }
     };
 }

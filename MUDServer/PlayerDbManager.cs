@@ -153,7 +153,7 @@ namespace Server
             return false;
         }
 
-        public void CreateNewUser(String username, String password)
+        public int CreateNewUser(String username, String password)
         {
             userCommand = new sqliteCommand("select PlayerID from Users", userDbConnection);
             int largestPlayerID = 0;
@@ -196,6 +196,8 @@ namespace Server
             {
                 Console.WriteLine("Failed to add: " + username + " : " + password + " to DB " + ex);
             }
+
+            return largestPlayerID;
         }
 
         public void CreateNewCharacter(String playerName, int owner)

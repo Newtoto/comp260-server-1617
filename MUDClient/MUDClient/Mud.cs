@@ -331,6 +331,7 @@ namespace MUDClient
             {
                 clientListBox.DataSource = null;
                 currentClientList.Clear();
+                currentClientList.Add("Global");
                 currentClientList.Add("Room");
 
                 foreach (String s in clientList.clientList)

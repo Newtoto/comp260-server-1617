@@ -253,6 +253,9 @@ namespace Server
                                             {
                                                 Console.WriteLine("Login success");
 
+                                                // Update title for player
+                                                SendClientID(chatClient, "Character Selection");
+
                                                 // Create and send login success message
                                                 LoginStateMsg successMsg = new LoginStateMsg();
                                                 successMsg.type = "login";
@@ -294,10 +297,13 @@ namespace Server
                                                 Console.WriteLine("Sign up success");
 
                                                 // Create user in database
-                                                playerDb.CreateNewUser(loginDetails.username, loginDetails.password);
+                                                playerID = playerDb.CreateNewUser(loginDetails.username, loginDetails.password);
 
                                                 // Log in user
                                                 loggedIn = true;
+
+                                                // Update title for player
+                                                SendClientID(chatClient, "Create Your First Character");
 
                                                 // Create and send sign up success message
                                                 LoginStateMsg signUpStateMsg = new LoginStateMsg();
@@ -518,7 +524,7 @@ namespace Server
                     // Add new player to socket dictionary
                     playerSockets.Add(clientID, serverClient);
 
-                    SendClientID(serverClient, "Not logged in");
+                    SendClientID(serverClient, "Log into your master account");
 
                     Thread.Sleep(500);
 

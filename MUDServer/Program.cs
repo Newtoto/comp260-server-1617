@@ -335,28 +335,39 @@ namespace Server
                                         CharacterSelectionMsg characterSelection = (CharacterSelectionMsg)m;
                                         Console.WriteLine("Player selected: " + characterSelection.msg);
 
-                                        playerName = characterSelection.msg;
-
-                                        // Title displayed on the client's window
-                                        SendClientID(chatClient, playerName);
-
-                                        playerChosen = true;
-                                        // Create and send sign up success message
-                                        LoginStateMsg playerSelectedMsg = new LoginStateMsg();
-                                        playerSelectedMsg.type = "select";
-                                        playerSelectedMsg.msg = "success";
-                                        SendLoginStateMsg(chatClient, playerSelectedMsg);
-
-                                        lock (loggedInSockets)
+                                        if(playerDb.DoesUserOwnCharacter(playerID, characterSelection.msg))
                                         {
-                                            Console.WriteLine("Added logged in player with id: " + playerID);
+                                            playerName = characterSelection.msg;
 
-                                            // Add new player to logged in socket dictionary
-                                            loggedInSockets.Add(playerID, chatClient);
+                                            // Title displayed on the client's window
+                                            SendClientID(chatClient, playerName);
 
-                                            Thread.Sleep(500);
-                                            SendClientList();
-                                            SendGlobalChatMessage(playerName + " has just rejoined the dungeon.");
+                                            playerChosen = true;
+                                            // Create and send sign up success message
+                                            LoginStateMsg playerSelectedMsg = new LoginStateMsg();
+                                            playerSelectedMsg.type = "select";
+                                            playerSelectedMsg.msg = "success";
+                                            SendLoginStateMsg(chatClient, playerSelectedMsg);
+
+                                            lock (loggedInSockets)
+                                            {
+                                                Console.WriteLine("Added logged in player with id: " + playerID);
+
+                                                // Add new player to logged in socket dictionary
+                                                loggedInSockets.Add(playerID, chatClient);
+
+                                                Thread.Sleep(500);
+                                                SendClientList();
+                                                SendGlobalChatMessage(playerName + " has just rejoined the dungeon.");
+                                            }
+                                        }
+                                        else
+                                        {
+                                            // Create and send sign up success message
+                                            LoginStateMsg playerSelectedMsg = new LoginStateMsg();
+                                            playerSelectedMsg.type = "select";
+                                            playerSelectedMsg.msg = "fail";
+                                            SendLoginStateMsg(chatClient, playerSelectedMsg);
                                         }
                                     }
                                     break;

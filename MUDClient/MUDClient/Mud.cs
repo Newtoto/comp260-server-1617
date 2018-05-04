@@ -190,7 +190,7 @@ namespace MUDClient
                                                     else
                                                     {
                                                         // Failed character creation
-                                                        // Character name already exists?
+                                                        Console.WriteLine("Character name already exists");
                                                     }
                                                 }
                                                 break;

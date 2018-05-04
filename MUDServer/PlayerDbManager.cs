@@ -100,21 +100,7 @@ namespace Server
             return 0;
         }
 
-        public int CreateUser(string username, string password)
-        {
-			userCommand = new sqliteCommand("select Username from " + "Users", userDbConnection);
-
-            var reader = userCommand.ExecuteReader();
-
-            while (reader.Read())
-            {
-                Console.WriteLine(reader[0]);
-            }
-
-            // Return failed sign up
-            return 0;
-        }
-
+        // Checks master user database for same username
         public bool CheckForExistingUsername(string username)
         {
             userCommand = new sqliteCommand("select * from Users where Username ='" + username + "'", userDbConnection);
@@ -124,6 +110,7 @@ namespace Server
             return reader.Read();
         }
 
+        // Checks character database for existing playername
         public bool CheckForExistingPlayerName(string playerName)
         {
             playerCommand = new sqliteCommand("select * from PlayerInfo where Name ='" + playerName + "'", playerDbConnection);
@@ -133,6 +120,7 @@ namespace Server
             return reader.Read();
         }
 
+        // Gets a list of all the characters owned by a player
         public List<String> GetPlayerCharacters(int playerID)
         {
             playerCommand = new sqliteCommand("select Name from PlayerInfo where Owner ='" + playerID + "'", playerDbConnection);
@@ -147,6 +135,22 @@ namespace Server
             }
 
             return characterList;
+        }
+
+        // Double checks the right owner is accessing the character, used for hacker protection
+        public bool DoesUserOwnCharacter(int playerID, String selectedCharacter)
+        {
+            List<String> characterList = GetPlayerCharacters(playerID);
+
+            foreach (String characterName in characterList)
+            {
+                if(characterName == selectedCharacter)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public void CreateNewUser(String username, String password)

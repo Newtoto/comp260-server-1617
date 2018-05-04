@@ -570,7 +570,21 @@ namespace MUDClient
 
         private void createPlayer_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("Create Player");
+            try
+            {
+                // Create character select message
+                CharacterCreationMsg characterCreation = new CharacterCreationMsg();
+                characterCreation.playerName = displayNameInput.Text;
+
+                MemoryStream outStream = characterCreation.WriteData();
+                client.Send(outStream.GetBuffer());
+
+                Console.WriteLine("Creating player with name: " + displayNameInput.Text);
+            }
+            catch
+            {
+                Console.WriteLine("Could not create player");
+            }
         }
 
         private void selectPlayer_Click_1(object sender, EventArgs e)

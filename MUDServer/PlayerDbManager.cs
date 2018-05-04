@@ -124,6 +124,15 @@ namespace Server
             return reader.Read();
         }
 
+        public bool CheckForExistingPlayerName(string playerName)
+        {
+            playerCommand = new sqliteCommand("select * from PlayerInfo where Name ='" + playerName + "'", playerDbConnection);
+
+            var reader = playerCommand.ExecuteReader();
+
+            return reader.Read();
+        }
+
         public List<String> GetPlayerCharacters(int playerID)
         {
             playerCommand = new sqliteCommand("select Name from PlayerInfo where Owner ='" + playerID + "'", playerDbConnection);
@@ -182,6 +191,27 @@ namespace Server
             catch (Exception ex)
             {
                 Console.WriteLine("Failed to add: " + username + " : " + password + " to DB " + ex);
+            }
+        }
+
+        public void CreateNewCharacter(String playerName, int owner)
+        {
+            try
+            {
+                var sql = "insert into " + "PlayerInfo" + " (Owner, Name, CurrentRoom) values ";
+                sql += "('" + owner + "'";
+                sql += ",";
+                sql += "'" + playerName + "'";
+                sql += ",";
+                sql += "'" + 1 + "'";
+                sql += ")";
+
+                playerCommand = new sqliteCommand(sql, playerDbConnection);
+                playerCommand.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Failed to add: " + playerName + " to DB " + ex);
             }
         }
     }

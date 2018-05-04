@@ -364,7 +364,48 @@ namespace Server
                                 case CharacterCreationMsg.ID:
                                     {
                                         CharacterCreationMsg characterCreation = (CharacterCreationMsg)m;
-                                        Console.WriteLine("Player created: " + characterCreation.playerName);
+
+                                        Console.WriteLine("Creating player with name: " + characterCreation.playerName);
+
+                                        if (playerDb.CheckForExistingPlayerName(characterCreation.playerName))
+                                        {
+                                            // Create and send sign up success message
+                                            LoginStateMsg playerCreateMsg = new LoginStateMsg();
+                                            playerCreateMsg.type = "create";
+                                            playerCreateMsg.msg = "fail";
+                                            SendLoginStateMsg(chatClient, playerCreateMsg);
+                                        }
+                                        else
+                                        {
+                                            // Create character in database
+                                            playerDb.CreateNewCharacter(characterCreation.playerName, playerID);
+
+                                            // Update player name
+                                            playerName = characterCreation.playerName;
+
+                                            // Title displayed on the client's window
+                                            SendClientID(chatClient, playerName);
+
+                                            playerChosen = true;
+
+                                            // Create and send sign up success message
+                                            LoginStateMsg playerCreateMsg = new LoginStateMsg();
+                                            playerCreateMsg.type = "create";
+                                            playerCreateMsg.msg = "success";
+                                            SendLoginStateMsg(chatClient, playerCreateMsg);
+
+                                            lock (loggedInSockets)
+                                            {
+                                                Console.WriteLine("Added logged in player with id: " + playerID);
+
+                                                // Add new player to logged in socket dictionary
+                                                loggedInSockets.Add(playerID, chatClient);
+
+                                                Thread.Sleep(500);
+                                                SendClientList();
+                                                SendGlobalChatMessage(playerName + " has just joined the dungeon, give them a warm welcome!");
+                                            }
+                                        }
                                     }
                                     break;
                                 default:

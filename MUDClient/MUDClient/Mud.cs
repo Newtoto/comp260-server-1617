@@ -135,24 +135,65 @@ namespace MUDClient
                                         Console.WriteLine("Login");
                                         LoginStateMsg loginMsg = (LoginStateMsg)m;
 
-                                        if (loginMsg.msg == "success")
+                                        switch(loginMsg.type)
                                         {
-                                            Console.WriteLine("Login success, enabling player select panel");
-                                            form.EnablePlayerSelect();
-                                            //form.AddError("Success");
-                                        }
-                                        else
-                                        {
-                                            // Login attempt feedback
-                                            if(loginMsg.type == "login")
-                                            {
-                                                form.AddError("Incorrect username or password.");
-                                            }
-                                            // Sign up attempt feedback
-                                            else
-                                            {
-                                                form.AddError("Username already in use.");
-                                            }
+                                            case "login":
+                                                {
+                                                    if (loginMsg.msg == "success")
+                                                    {
+                                                        Console.WriteLine("Login success, enabling player select panel");
+                                                        form.EnablePlayerSelect();
+                                                        //form.AddError("Success");
+                                                    }
+                                                    else
+                                                    {
+                                                        // Failed login
+                                                        form.AddError("Incorrect username or password.");
+                                                    }
+                                                }
+                                                break;
+                                            case "signup":
+                                                {
+                                                    if (loginMsg.msg == "success")
+                                                    {
+                                                        Console.WriteLine("Login success, enabling player select panel");
+                                                        form.EnablePlayerSelect();
+                                                    }
+                                                    else
+                                                    {
+                                                        // Failed sign up
+                                                        form.AddError("Username already in use.");
+                                                    }
+                                                }
+                                                break;
+                                            case "select":
+                                                {
+                                                    if (loginMsg.msg == "success")
+                                                    {
+                                                        Console.WriteLine("Character select successful");
+                                                        form.EnableMud();
+                                                    }
+                                                    else
+                                                    {
+                                                        // Failed character select (this shouldn't happen unless someone is hacking)
+                                                        MessageBox.Show("Something has gone wrong, please restart your client");
+                                                    }
+                                                }
+                                                break;
+                                            case "create":
+                                                {
+                                                    if (loginMsg.msg == "success")
+                                                    {
+                                                        Console.WriteLine("Sign up successful");
+                                                        form.EnableMud();
+                                                    }
+                                                    else
+                                                    {
+                                                        // Failed character creation
+                                                        // Character name already exists?
+                                                    }
+                                                }
+                                                break;
                                         }
                                     }
                                     break;
@@ -313,9 +354,9 @@ namespace MUDClient
 
                 foreach (String s in characterList.characterList)
                 {
-                    currentClientList.Add(s);
+                    characterSelectionList.Add(s);
                 }
-                availableCharacters.DataSource = currentClientList;
+                availableCharacters.DataSource = characterSelectionList;
             }
         }
 
@@ -421,7 +462,7 @@ namespace MUDClient
             }
             else
             {
-                playerSelectPanel.Visible = true;
+                playerSelectPanel.Visible = false;
             }
 
             if (mudPanel.InvokeRequired)
@@ -539,7 +580,14 @@ namespace MUDClient
 
         private void selectPlayer_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("Select Player");
+            // Create character select message
+            CharacterSelectionMsg characterSelection = new CharacterSelectionMsg();
+            characterSelection.msg = availableCharacters.SelectedValue.ToString();
+
+            MemoryStream outStream = characterSelection.WriteData();
+            client.Send(outStream.GetBuffer());
+
+            Console.WriteLine("Select Player: " + availableCharacters.SelectedValue);
         }
     }
 }

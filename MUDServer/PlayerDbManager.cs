@@ -124,19 +124,39 @@ namespace Server
             return reader.Read();
         }
 
-        public String GetPlayerUserName(int playerID)
+        public List<String> GetPlayerCharacters(int playerID)
         {
             playerCommand = new sqliteCommand("select Name from PlayerInfo where Owner ='" + playerID + "'", playerDbConnection);
+            List<String> characterList = new List<String>();
 
             var reader = playerCommand.ExecuteReader();
 
             while (reader.Read())
             {
                 Console.WriteLine(reader[0]);
-                return reader[0].ToString();
+                characterList.Add(reader[0].ToString());
             }
 
-            return "";
+            return characterList;
+        }
+
+        public void CreateNewUser(String username, String password)
+        {
+            try
+            {
+                var sql = "insert into " + "Users" + " (Username, Password) values ";
+                sql += "('" + username + "'";
+                sql += ",";
+                sql += "'" + password + "'";
+                sql += ")";
+
+                userCommand = new sqliteCommand(sql, userDbConnection);
+                userCommand.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Failed to add: " + username + " : " + password + " to DB " + ex);
+            }
         }
     }
 }

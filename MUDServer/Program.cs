@@ -131,7 +131,7 @@ namespace Server
                 foreach (KeyValuePair<int, Socket> s in loggedInSockets)
                 {
                     // Get string username from query using s.Key and add
-                    string playerUserName = playerDb.GetPlayerUserName(s.Key);
+                    string playerUserName = playerDb.GetPlayerCharacters(s.Key)[0];
                     
                     // Add user to list
                     clientListMsg.clientList.Add(playerUserName);
@@ -142,12 +142,11 @@ namespace Server
         }
 
         // Sends list of playable characters
-        static void SendCharacterList(Socket s)
+        static void SendCharacterList(Socket s, int playerID)
         {
             CharacterListMsg characterListMsg = new CharacterListMsg();
 
-            characterListMsg.characterList.Add("Example 1");
-            characterListMsg.characterList.Add("Example 2");
+            characterListMsg.characterList = playerDb.GetPlayerCharacters(playerID);
 
             SendMessageToSocket(s, characterListMsg);
         }
@@ -207,6 +206,7 @@ namespace Server
             int clientID = GetClientIDFromSocket(chatClient);
             int playerID = 0;
             string playerName = "";
+            List<String> ownedCharacters = new List<String>();
 
             Console.WriteLine("client receive thread for client " + clientID);
 
@@ -246,45 +246,30 @@ namespace Server
 
                                             Console.WriteLine("Logging in user " + loginDetails.username + " and password " + loginDetails.password);
 
+                                            // Get player ID from database using username
                                             playerID = playerDb.LoginUser(loginDetails.username, loginDetails.password);
 
                                             if (playerID > 0)
                                             {
                                                 Console.WriteLine("Login success");
 
-                                                // Create success message
+                                                // Create and send login success message
                                                 LoginStateMsg successMsg = new LoginStateMsg();
                                                 successMsg.type = "login";
                                                 successMsg.msg = "success";
-
                                                 SendLoginStateMsg(chatClient, successMsg);
-                                                SendCharacterList(chatClient);
+
+                                                // Send player list of characters they own
+                                                ownedCharacters = playerDb.GetPlayerCharacters(playerID);
+                                                SendCharacterList(chatClient, playerID);
 
                                                 loggedIn = true;
-
-                                                lock (loggedInSockets)
-                                                {
-                                                    Console.WriteLine("Added logged in player with id: " + playerID);
-
-                                                    // Get player's name from database using logged in user
-                                                    playerName = playerDb.GetPlayerUserName(playerID);
-
-                                                    // Add new player to logged in socket dictionary
-                                                    loggedInSockets.Add(playerID, chatClient);
-
-                                                    // Title displayed on the client's window
-                                                    SendClientID(chatClient, playerName);
-
-                                                    Thread.Sleep(500);
-                                                    SendClientList();
-                                                    SendGlobalChatMessage(playerName + " has just rejoined the dungeon.");
-                                                }
                                             }
                                             else
                                             {
                                                 Console.WriteLine("Login failed");
 
-                                                // Create fail message
+                                                // Create and send login fail message
                                                 LoginStateMsg failMsg = new LoginStateMsg();
                                                 failMsg.type = "login";
                                                 failMsg.msg = "failed";
@@ -301,14 +286,15 @@ namespace Server
 
                                             Console.WriteLine("Signing up user " + loginDetails.username);
 
+                                            // Check if username is in use
                                             bool userExists = playerDb.CheckForExistingUsername(loginDetails.username);
 
                                             if (!userExists)
                                             {
                                                 Console.WriteLine("Sign up success");
 
-                                                // Create user in db
-                                                // Create player in db
+                                                // Create user in database
+                                                playerDb.CreateNewUser(loginDetails.username, loginDetails.password);
 
                                                 // Log in user
                                                 loggedIn = true;
@@ -345,15 +331,40 @@ namespace Server
                                 // select existing player
                                 case CharacterSelectionMsg.ID:
                                     {
+                                        // Log in player with this character
                                         CharacterSelectionMsg characterSelection = (CharacterSelectionMsg)m;
-                                        Console.WriteLine("Player selected :" + characterSelection.playerID);
+                                        Console.WriteLine("Player selected: " + characterSelection.msg);
+
+                                        playerName = characterSelection.msg;
+
+                                        // Title displayed on the client's window
+                                        SendClientID(chatClient, playerName);
+
+                                        playerChosen = true;
+                                        // Create and send sign up success message
+                                        LoginStateMsg playerSelectedMsg = new LoginStateMsg();
+                                        playerSelectedMsg.type = "select";
+                                        playerSelectedMsg.msg = "success";
+                                        SendLoginStateMsg(chatClient, playerSelectedMsg);
+
+                                        lock (loggedInSockets)
+                                        {
+                                            Console.WriteLine("Added logged in player with id: " + playerID);
+
+                                            // Add new player to logged in socket dictionary
+                                            loggedInSockets.Add(playerID, chatClient);
+
+                                            Thread.Sleep(500);
+                                            SendClientList();
+                                            SendGlobalChatMessage(playerName + " has just rejoined the dungeon.");
+                                        }
                                     }
                                     break;
                                 // create new player
                                 case CharacterCreationMsg.ID:
                                     {
                                         CharacterCreationMsg characterCreation = (CharacterCreationMsg)m;
-                                        Console.WriteLine("Player created :" + characterCreation.playerName);
+                                        Console.WriteLine("Player created: " + characterCreation.playerName);
                                     }
                                     break;
                                 default:

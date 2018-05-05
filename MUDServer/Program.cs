@@ -426,12 +426,15 @@ namespace Server
                                     case PrivateChatMsg.ID:
                                         {
                                             PrivateChatMsg privateMsg = (PrivateChatMsg)m;
-                                            String formattedMsg = characterName + ": " + privateMsg.msg;
-                                            Console.WriteLine("private chat - " + formattedMsg + "to " + privateMsg.destination);
 
-                                            //SendPrivateMessage(GetSocketFromCharacterName(privateMsg.destination), playerID, formattedMsg);
-                                            formattedMsg = "Sent private message to " + privateMsg.destination + ": " + privateMsg.msg;
-                                            //SendPrivateMessage(chatClient, "", formattedMsg);
+                                            Console.WriteLine("Sending private message from " + characterName + " to " + privateMsg.destination);
+
+                                            Socket targetSocket = socketManager.GetSocketFromCharacterName(characterName);
+
+                                            // Append message with sender's name
+                                            privateMsg.msg = "Private message from " + characterName + ": " + privateMsg.msg;
+
+                                            messageManager.SendMessageToSocket(targetSocket, privateMsg);
                                         }
                                         break;
 

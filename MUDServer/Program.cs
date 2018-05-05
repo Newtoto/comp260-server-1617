@@ -432,7 +432,7 @@ namespace Server
 
                                             Console.WriteLine("Sending private message from " + characterName + " to " + privateMsg.destination);
 
-                                            Socket targetSocket = socketManager.GetSocketFromCharacterName(characterName);
+											Socket targetSocket = socketManager.GetSocketFromCharacterName(privateMsg.destination);
 
                                             // Append message with sender's name
                                             privateMsg.msg = "Private message from " + characterName + ": " + privateMsg.msg;

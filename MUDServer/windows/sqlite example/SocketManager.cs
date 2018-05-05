@@ -15,6 +15,7 @@ namespace Server
     {
         public Dictionary<int, Socket> playerSockets = new Dictionary<int, Socket>();
         public Dictionary<int, Socket> loggedInSockets = new Dictionary<int, Socket>();
+        public Dictionary<Socket, string> socketToCharacterName = new Dictionary<Socket, string>();
 
         public SocketManager()
         {
@@ -72,12 +73,18 @@ namespace Server
             }
         }
 
-        public void AddClientToLoggedInSockets(int userID, Socket s)
+        public void AddClientToLoggedInSockets(int userID, Socket s, string characterName)
         {
             lock (loggedInSockets)
             {
                 // Add new player to logged in socket dictionary
                 loggedInSockets.Add(userID, s);
+            }
+
+            lock (socketToCharacterName)
+            {
+                // Add character to dictionary
+                socketToCharacterName.Add(s, characterName);
             }
         }
     }

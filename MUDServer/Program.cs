@@ -78,7 +78,7 @@ namespace Server
             if(selectSuccess == "success")
             {
                 // Add the client to logged in socket dictionary
-                socketManager.AddClientToLoggedInSockets(userID, s);
+                socketManager.AddClientToLoggedInSockets(userID, s, characterName);
 
                 // Allow previous message to go through
                 Thread.Sleep(500);
@@ -150,15 +150,12 @@ namespace Server
         {
             ClientListMsg clientListMsg = new ClientListMsg();
 
-            lock (socketManager.loggedInSockets)
+            lock (socketManager.socketToCharacterName)
             {
-                foreach (KeyValuePair<int, Socket> s in socketManager.loggedInSockets)
+                foreach (KeyValuePair<Socket, string> s in socketManager.socketToCharacterName)
                 {
-                    // Get string username from query using s.Key and add
-                    string playerUserName = playerDB.GetPlayerCharacters(s.Key)[0];
-                    
                     // Add user to list
-                    clientListMsg.clientList.Add(playerUserName);
+                    clientListMsg.clientList.Add(s.Value);
                 }
 
                 SendToAllLoggedInPlayers(clientListMsg);

@@ -48,7 +48,9 @@ namespace Server
             // Update title for player
             SendClientID(s, newTitle);
 
-            // Create and send login success message
+			Thread.Sleep(500);
+
+			// Create and send login success message
             LoginStateMsg successMsg = new LoginStateMsg();
             successMsg.type = messageType;
             successMsg.msg = loginSuccess;

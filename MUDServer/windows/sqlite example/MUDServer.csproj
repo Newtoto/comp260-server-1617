@@ -66,9 +66,6 @@
     <Compile Include="..\..\DatabaseController.cs">
       <Link>DatabaseController.cs</Link>
     </Compile>
-    <Compile Include="..\..\Dungeon.cs">
-      <Link>Dungeon.cs</Link>
-    </Compile>
     <Compile Include="..\..\DungeonDBAccess.cs">
       <Link>DungeonDBAccess.cs</Link>
     </Compile>
@@ -78,20 +75,11 @@
     <Compile Include="..\..\MessageTypes.cs">
       <Link>MessageTypes.cs</Link>
     </Compile>
-    <Compile Include="..\..\Player.cs">
-      <Link>Player.cs</Link>
-    </Compile>
     <Compile Include="..\..\Program.cs">
       <Link>Program.cs</Link>
     </Compile>
-    <Compile Include="..\..\Room.cs">
-      <Link>Room.cs</Link>
-    </Compile>
     <Compile Include="..\..\SocketManager.cs">
       <Link>SocketManager.cs</Link>
-    </Compile>
-    <Compile Include="..\..\sql_example.cs">
-      <Link>sql_example.cs</Link>
     </Compile>
     <Compile Include="..\..\UserDBAccess.cs">
       <Link>UserDBAccess.cs</Link>
@@ -99,15 +87,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\dungeon.db">
-      <Link>dungeon.db</Link>
-    </None>
-    <None Include="..\..\players.db">
-      <Link>players.db</Link>
-    </None>
-    <None Include="..\..\users.db">
-      <Link>users.db</Link>
-    </None>
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>

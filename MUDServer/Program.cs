@@ -443,7 +443,7 @@ namespace Server
 
                                             // Send feedback to original sender
 											privateMsg.msg = "You to " + privateMsg.destination + ": " + privateMsg.msg;
-											messageManager.SendMessageToSocket(targetSocket, privateMsg);
+											messageManager.SendMessageToSocket(chatClient, privateMsg);
 										}
                                         break;
 

@@ -227,7 +227,6 @@ namespace Server
             Socket chatClient = (Socket)o;
             int clientID = socketManager.GetClientIDFromSocket(chatClient);
             int userID = 0;
-            int characterID = 0;
 
             string characterName = "";
             List<String> ownedCharacters = new List<String>();
@@ -507,7 +506,7 @@ namespace Server
             Socket serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
             // Server IP 138.68.161.95, test 127.0.0.1
-            serverSocket.Bind(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8500));
+			serverSocket.Bind(new IPEndPoint(IPAddress.Parse("138.68.161.95"), 8500));
             serverSocket.Listen(32);
 
             bool bQuit = false;

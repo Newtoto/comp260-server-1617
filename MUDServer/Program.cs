@@ -439,6 +439,8 @@ namespace Server
 
                                             messageManager.SendMessageToSocket(targetSocket, privateMsg);
 
+											Thread.Sleep(500);
+
                                             // Send feedback to original sender
 											privateMsg.msg = "You to " + privateMsg.destination + ": " + privateMsg.msg;
 											messageManager.SendMessageToSocket(targetSocket, privateMsg);

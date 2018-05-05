@@ -126,5 +126,23 @@ namespace Server
                 Console.WriteLine("Failed to add: " + characterName + " to DB " + ex);
             }
         }
+
+        // Moves character to new room location
+        public void MoveCharacterLocation(String characterName, int newRoomId)
+        {
+            // Make sure roomID is valid
+            if(newRoomId > 0)
+            {
+                try
+                {
+                    characterCommand = new sqliteCommand("update PlayerInfo set CurrentRoom = '" + newRoomId + "' where Name = '" + characterName + "'", characterDBConnection);
+                    characterCommand.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Failed to add: " + characterName + " to DB " + ex);
+                }
+            }
+        }
     }
 }

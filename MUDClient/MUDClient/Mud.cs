@@ -248,28 +248,28 @@ namespace MUDClient
         private void northTile_Click(object sender, EventArgs e)
         {
             // Create navigation message
-            createNavigationMessageFromString("go north");
+            createNavigationMessageFromString("North");
         }
 
         // Send east direction
         private void eastTile_Click(object sender, EventArgs e)
         {
             // Create navigation message
-            createNavigationMessageFromString("go east");
+            createNavigationMessageFromString("East");
         }
 
         // Send south direction
         private void southTile_Click(object sender, EventArgs e)
         {
             // Create navigation message
-            createNavigationMessageFromString("go south");
+            createNavigationMessageFromString("South");
         }
 
         // Send west direction
         private void westTile_Click(object sender, EventArgs e)
         {
             // Create navigation message
-            createNavigationMessageFromString("go west");
+            createNavigationMessageFromString("West");
         }
 
         // Sends navigation message to server

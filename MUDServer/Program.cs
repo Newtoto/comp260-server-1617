@@ -441,15 +441,35 @@ namespace Server
                                             {
                                                 DungeonNavigationMsg navigationMsg = (DungeonNavigationMsg)m;
 
-                                                // Respond to the player's navigation movement
-                                                //String formattedMsg = dungeon.ParsePlayerInput(thisPlayer, navigationMsg.msg);
+                                                // Initialise response message
+                                                PublicChatMsg serverResponse = new PublicChatMsg();
 
-                                                //Console.WriteLine("Navigation - " + formattedMsg);
+                                                int currentRoom = characterDB.GetCharacterRoom(characterName);
+                                                int newRoomID = dungeonDB.GetRoomExit(navigationMsg.msg, currentRoom);
 
-                                                // Send response
-                                                //SendPrivateMessage(chatClient, "", formattedMsg);
+                                                // Successful room change
+                                                if(newRoomID > 0)
+                                                {
+                                                    Console.WriteLine("Moved " + characterName + "to room with ID: " + newRoomID);
+                                                    characterDB.MoveCharacterLocation(characterName, newRoomID);
+                                                }
+                                                // Exit not available
+                                                else
+                                                {
+                                                    Console.WriteLine(characterName + " movement failed, the was is closed");
 
-                                                String roomText = GetRoomTextFromCharacterName(characterName);
+                                                    // Create and send exit blocked message
+                                                    serverResponse.msg = "You cannot go " + navigationMsg.msg + ".";
+                                                    messageManager.SendMessageToSocket(chatClient, serverResponse);
+
+                                                    // Allow failed navigation message to send
+                                                    Thread.Sleep(500);
+                                                }
+
+
+                                                // Send room text to client
+                                                serverResponse.msg = GetRoomTextFromCharacterName(characterName);
+                                                messageManager.SendMessageToSocket(chatClient, serverResponse);
                                             }
                                         }
                                         break;

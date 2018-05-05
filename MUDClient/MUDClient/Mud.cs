@@ -102,6 +102,7 @@ namespace MUDClient
                                 case PublicChatMsg.ID:
                                     {
                                         PublicChatMsg publicMsg = (PublicChatMsg)m;
+                                        Console.WriteLine(publicMsg.msg);
 
                                         form.AddText(publicMsg.msg);
                                     }
@@ -364,19 +365,30 @@ namespace MUDClient
             }
         }
 
-        // Send text input
+        // Send text input to selected target
         private void sendButton_Click(object sender, EventArgs e)
         {
             if ((inputBox.Text.Length > 0) && (client != null))
             {
                 try
                 {
-                    if (clientListBox.SelectedIndex == 0)
+                    // Index of global chat
+                    if(clientListBox.SelectedIndex == 0)
                     {
                         // Create public message
                         PublicChatMsg publicMsg = new PublicChatMsg();
 
-                        publicMsg.msg = inputBox.Text;
+                        publicMsg.msg = "global:" + inputBox.Text;
+                        MemoryStream outStream = publicMsg.WriteData();
+                        client.Send(outStream.GetBuffer());
+                    }
+                    // Index of room chat
+                    else if (clientListBox.SelectedIndex == 1)
+                    {
+                        // Create public message
+                        PublicChatMsg publicMsg = new PublicChatMsg();
+
+                        publicMsg.msg = "room:" + inputBox.Text;
                         MemoryStream outStream = publicMsg.WriteData();
                         client.Send(outStream.GetBuffer());
                     }
@@ -578,16 +590,16 @@ namespace MUDClient
             {
                 // Create character select message
                 CharacterCreationMsg characterCreation = new CharacterCreationMsg();
-                characterCreation.playerName = displayNameInput.Text;
+                characterCreation.characterName = displayNameInput.Text;
 
                 MemoryStream outStream = characterCreation.WriteData();
                 client.Send(outStream.GetBuffer());
 
-                Console.WriteLine("Creating player with name: " + displayNameInput.Text);
+                Console.WriteLine("Creating character with name: " + displayNameInput.Text);
             }
             catch
             {
-                Console.WriteLine("Could not create player");
+                Console.WriteLine("Could not create character");
             }
         }
 

@@ -318,7 +318,7 @@ namespace MessageTypes
     {
         public const int ID = 9;
         public String msg;
-        public int playerID;
+        public int userID;
 
         public CharacterSelectionMsg() { mID = ID; }
 
@@ -329,7 +329,7 @@ namespace MessageTypes
 
             write.Write(ID);
             write.Write(msg);
-            write.Write(playerID);
+            write.Write(userID);
 
             write.Close();
 
@@ -339,14 +339,14 @@ namespace MessageTypes
         public override void ReadData(BinaryReader read)
         {
             msg = read.ReadString();
-            playerID = read.ReadInt32();
+            userID = read.ReadInt32();
         }
     };
 
     public class CharacterCreationMsg : Msg
     {
         public const int ID = 10;
-        public String playerName;
+        public String characterName;
 
         public CharacterCreationMsg() { mID = ID; }
 
@@ -356,7 +356,7 @@ namespace MessageTypes
             BinaryWriter write = new BinaryWriter(stream);
 
             write.Write(ID);
-            write.Write(playerName);
+            write.Write(characterName);
 
             write.Close();
 
@@ -365,7 +365,7 @@ namespace MessageTypes
 
         public override void ReadData(BinaryReader read)
         {
-            playerName = read.ReadString();
+            characterName = read.ReadString();
         }
     };
 

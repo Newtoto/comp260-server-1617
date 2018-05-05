@@ -85,6 +85,7 @@
       <Link>sql_example.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SocketManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\dungeon.db">

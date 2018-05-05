@@ -22,26 +22,26 @@ namespace Server
 {
     class PlayerDbManager
     {
-        sqliteConnection playerDbConnection = null;
-		sqliteCommand playerCommand;
-        sqliteConnection userDbConnection = null;
+        sqliteConnection characterDBConnection = null;
+		sqliteCommand characterCommand;
+        sqliteConnection userDBConnection = null;
 		sqliteCommand userCommand;
 
         public PlayerDbManager()
         {
-            OpenDungeonDatabase();
+            OpenDatabases();
         }
 
         // Get and open database
-        private void OpenDungeonDatabase()
+        private void OpenDatabases()
         {
             // Link databases
-            playerDbConnection = new sqliteConnection("Data Source =" + "players.db" + ";Version=3;FailIfMissing=True");
-            userDbConnection = new sqliteConnection("Data Source =" + "users.db" + ";Version=3;FailIfMissing=True");
+            characterDBConnection = new sqliteConnection("Data Source =" + "players.db" + ";Version=3;FailIfMissing=True");
+            userDBConnection = new sqliteConnection("Data Source =" + "users.db" + ";Version=3;FailIfMissing=True");
 
             try
             {
-                playerDbConnection.Open();
+                characterDBConnection.Open();
                 Console.WriteLine("opened player db");
             }
             catch (Exception ex)
@@ -51,7 +51,7 @@ namespace Server
 
             try
             {
-                userDbConnection.Open();
+                userDBConnection.Open();
                 Console.WriteLine("opened user db");
             }
             catch (Exception ex)
@@ -61,23 +61,24 @@ namespace Server
         }
 
         // Get the roomId of the room the player is in
-        public int GetPlayerRoom(int playerID)
+        public int GetCharacterRoom(String characterName)
         {
-			playerCommand = new sqliteCommand("select CurrentRoom from " + "PlayerInfo", playerDbConnection);
+            characterCommand = new sqliteCommand("select CurrentRoom from PlayerInfo where Name ='" + characterName + "'", characterDBConnection);
 
-            var reader = playerCommand.ExecuteReader();
+            var reader = characterCommand.ExecuteReader();
 
             while (reader.Read())
             {
-                Console.WriteLine(reader["PlayerID"]);
+                return int.Parse(string.Format("{0}", reader[0]));
             }
 
             return 0;
         }
 
+        // Returns the playerID of user with matching name and password
         public int LoginUser(string username, string password)
         {
-			userCommand = new sqliteCommand("select Password from Users where Username ='" + username + "'", userDbConnection);
+			userCommand = new sqliteCommand("select Password from Users where Username ='" + username + "'", userDBConnection);
 
             var reader = userCommand.ExecuteReader();
 
@@ -87,7 +88,7 @@ namespace Server
                 {
                     Console.WriteLine(reader[0]);
                     // Get and return player ID
-					userCommand = new sqliteCommand("select PlayerID from Users where Username ='" + username + "'", userDbConnection);
+					userCommand = new sqliteCommand("select PlayerID from Users where Username ='" + username + "'", userDBConnection);
                     reader = userCommand.ExecuteReader();
 
                     while (reader.Read())
@@ -103,7 +104,7 @@ namespace Server
         // Checks master user database for same username
         public bool CheckForExistingUsername(string username)
         {
-            userCommand = new sqliteCommand("select * from Users where Username ='" + username + "'", userDbConnection);
+            userCommand = new sqliteCommand("select * from Users where Username ='" + username + "'", userDBConnection);
 
             var reader = userCommand.ExecuteReader();
 
@@ -111,22 +112,22 @@ namespace Server
         }
 
         // Checks character database for existing playername
-        public bool CheckForExistingPlayerName(string playerName)
+        public bool CheckForExistingCharacterName(string characterName)
         {
-            playerCommand = new sqliteCommand("select * from PlayerInfo where Name ='" + playerName + "'", playerDbConnection);
+            characterCommand = new sqliteCommand("select * from PlayerInfo where Name ='" + characterName + "'", characterDBConnection);
 
-            var reader = playerCommand.ExecuteReader();
+            var reader = characterCommand.ExecuteReader();
 
             return reader.Read();
         }
 
         // Gets a list of all the characters owned by a player
-        public List<String> GetPlayerCharacters(int playerID)
+        public List<String> GetPlayerCharacters(int userID)
         {
-            playerCommand = new sqliteCommand("select Name from PlayerInfo where Owner ='" + playerID + "'", playerDbConnection);
+            characterCommand = new sqliteCommand("select Name from PlayerInfo where Owner ='" + userID + "'", characterDBConnection);
             List<String> characterList = new List<String>();
 
-            var reader = playerCommand.ExecuteReader();
+            var reader = characterCommand.ExecuteReader();
 
             while (reader.Read())
             {
@@ -153,9 +154,10 @@ namespace Server
             return false;
         }
 
+        // Create new master user in user database
         public int CreateNewUser(String username, String password)
         {
-            userCommand = new sqliteCommand("select PlayerID from Users", userDbConnection);
+            userCommand = new sqliteCommand("select PlayerID from Users", userDBConnection);
             int largestPlayerID = 0;
             var reader = userCommand.ExecuteReader();
 
@@ -189,7 +191,7 @@ namespace Server
                 sql += "'" + largestPlayerID + "'";
                 sql += ")";
 
-                userCommand = new sqliteCommand(sql, userDbConnection);
+                userCommand = new sqliteCommand(sql, userDBConnection);
                 userCommand.ExecuteNonQuery();
             }
             catch (Exception ex)
@@ -200,24 +202,25 @@ namespace Server
             return largestPlayerID;
         }
 
-        public void CreateNewCharacter(String playerName, int owner)
+        // Makes new character and associates with player
+        public void CreateNewCharacter(String characterName, int owner)
         {
             try
             {
                 var sql = "insert into " + "PlayerInfo" + " (Owner, Name, CurrentRoom) values ";
                 sql += "('" + owner + "'";
                 sql += ",";
-                sql += "'" + playerName + "'";
+                sql += "'" + characterName + "'";
                 sql += ",";
                 sql += "'" + 1 + "'";
                 sql += ")";
 
-                playerCommand = new sqliteCommand(sql, playerDbConnection);
-                playerCommand.ExecuteNonQuery();
+                characterCommand = new sqliteCommand(sql, characterDBConnection);
+                characterCommand.ExecuteNonQuery();
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Failed to add: " + playerName + " to DB " + ex);
+                Console.WriteLine("Failed to add: " + characterName + " to DB " + ex);
             }
         }
     }

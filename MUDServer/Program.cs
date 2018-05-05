@@ -29,11 +29,10 @@ namespace Server
 {
     class Program
     {
-        static Dictionary<int, Socket> playerSockets = new Dictionary<int, Socket>();
-        static Dictionary<int, Socket> loggedInSockets = new Dictionary<int, Socket>();
+        static SocketManager socketManager = new SocketManager();
 
-        static PlayerDbManager playerDb = new PlayerDbManager();
-        static DungeonDbManager dungeonDb = new DungeonDbManager();
+        static PlayerDbManager playerDB = new PlayerDbManager();
+        static DungeonDbManager dungeonDB = new DungeonDbManager();
 
         static int clientID = 1;
 
@@ -45,44 +44,69 @@ namespace Server
             s.Send(outStream.GetBuffer());
         }
 
-        // Uses socket connected to find ID of player
-        static int GetClientIDFromSocket(Socket socket)
+        // Log in / sign up user process
+        static List<String> SendLogInStateToUser(Socket s, String newTitle, String messageType, String loginSuccess, int userID)
         {
-            foreach (KeyValuePair<int, Socket> i in playerSockets)
-            {
-                if(playerSockets[i.Key] == socket)
-                {
-                    return i.Key;
-                }
-            }
+            Console.WriteLine("Login " + loginSuccess);
 
-            return 0;
+            // Update title for player
+            SendClientID(s, newTitle);
+
+            // Create and send login success message
+            LoginStateMsg successMsg = new LoginStateMsg();
+            successMsg.type = messageType;
+            successMsg.msg = loginSuccess;
+            SendLoginStateMsg(s, successMsg);
+
+            // Send player list of characters they own
+            return playerDB.GetPlayerCharacters(userID);
         }
 
-        // Remove client from dictionary
-        static void RemoveClientByID(int clientID)
+        // Character select / create user process
+        static void SendCharacterSelectStateToUser(Socket s, String characterName, String messageType, String selectSuccess, int userID)
         {
-            Console.WriteLine("Removing client " + clientID);
-            lock (playerSockets)
-            {
-                playerSockets.Remove(clientID);
-            }
-        }
+            // Title displayed on the client's window
+            SendClientID(s, characterName);
 
-        // Remove player from dictionary
-        static void RemovePlayerByID(int playerID)
-        {
-            Console.WriteLine("Removing player " + playerID);
-            lock (loggedInSockets)
+            // Create and send sign up success message
+            LoginStateMsg playerSelectedMsg = new LoginStateMsg();
+            playerSelectedMsg.type = messageType;
+            playerSelectedMsg.msg = selectSuccess;
+            SendLoginStateMsg(s, playerSelectedMsg);
+
+            // Successful selection / creation
+            if(selectSuccess == "success")
             {
-                try
+                // Add the client to logged in socket dictionary
+                socketManager.AddClientToLoggedInSockets(userID, s);
+
+                // Allow previous message to go through
+                Thread.Sleep(500);
+
+                // Rejoining character
+                if(messageType == "select")
                 {
-                    loggedInSockets.Remove(playerID);
+                    SendGlobalChatMessage(characterName + " has just rejoined the dungeon.");
                 }
-                catch
+                // First time joining
+                else
                 {
-                    // Player wasn't logged in
+                    // Create character in database
+                    playerDB.CreateNewCharacter(characterName, userID);
+
+                    SendGlobalChatMessage(characterName + " has just rejoined the dungeon.");
                 }
+
+                // Send list of logged in character names
+                SendClientList();
+
+                // Allow previous message to go through
+                Thread.Sleep(500);
+
+                // Create and send room text
+                PublicChatMsg roomText = new PublicChatMsg();
+                roomText.msg = GetRoomTextFromCharacterName(characterName);
+                SendMessageToSocket(s, roomText);
             }
         }
 
@@ -115,7 +139,7 @@ namespace Server
 
             // Send list to all logged in players
             MemoryStream outStream = message.WriteData();
-            foreach (KeyValuePair<int, Socket> s in loggedInSockets)
+            foreach (KeyValuePair<int, Socket> s in socketManager.loggedInSockets)
             {
                 s.Value.Send(outStream.GetBuffer());
             }
@@ -126,12 +150,12 @@ namespace Server
         {
             ClientListMsg clientListMsg = new ClientListMsg();
 
-            lock (loggedInSockets)
+            lock (socketManager.loggedInSockets)
             {
-                foreach (KeyValuePair<int, Socket> s in loggedInSockets)
+                foreach (KeyValuePair<int, Socket> s in socketManager.loggedInSockets)
                 {
                     // Get string username from query using s.Key and add
-                    string playerUserName = playerDb.GetPlayerCharacters(s.Key)[0];
+                    string playerUserName = playerDB.GetPlayerCharacters(s.Key)[0];
                     
                     // Add user to list
                     clientListMsg.clientList.Add(playerUserName);
@@ -146,7 +170,7 @@ namespace Server
         {
             CharacterListMsg characterListMsg = new CharacterListMsg();
 
-            characterListMsg.characterList = playerDb.GetPlayerCharacters(playerID);
+            characterListMsg.characterList = playerDB.GetPlayerCharacters(playerID);
 
             SendMessageToSocket(s, characterListMsg);
         }
@@ -189,9 +213,13 @@ namespace Server
 
         }
 
-        static void WelcomeNewClient(int playerID)
+        // Returns text for current character room
+        static String GetRoomTextFromCharacterName(String characterName)
         {
+            // Get room ID from characterName
+            int roomID = playerDB.GetCharacterRoom(characterName);
 
+            return dungeonDB.GetRoomText(roomID);
         }
 
         static void receiveClientProcess(Object o)
@@ -203,9 +231,11 @@ namespace Server
             bool bQuit = false;
 
             Socket chatClient = (Socket)o;
-            int clientID = GetClientIDFromSocket(chatClient);
-            int playerID = 0;
-            string playerName = "";
+            int clientID = socketManager.GetClientIDFromSocket(chatClient);
+            int userID = 0;
+            int characterID = 0;
+
+            string characterName = "";
             List<String> ownedCharacters = new List<String>();
 
             Console.WriteLine("client receive thread for client " + clientID);
@@ -244,39 +274,26 @@ namespace Server
                                         {
                                             LoginAttempt loginDetails = (LoginAttempt)m;
 
-                                            Console.WriteLine("Logging in user " + loginDetails.username + " and password " + loginDetails.password);
+                                            Console.WriteLine("Logging in user " + loginDetails.username);
 
-                                            // Get player ID from database using username
-                                            playerID = playerDb.LoginUser(loginDetails.username, loginDetails.password);
+                                            // Update userID using database
+                                            userID = playerDB.LoginUser(loginDetails.username, loginDetails.password);
 
-                                            if (playerID > 0)
+                                            // Successful login
+                                            if (userID > 0)
                                             {
-                                                Console.WriteLine("Login success");
+                                                // Update list of available characters, and send login success info to player
+                                                ownedCharacters = SendLogInStateToUser(chatClient, "Character Selection", "login", "success", userID);
+                                                SendCharacterList(chatClient, userID);
 
-                                                // Update title for player
-                                                SendClientID(chatClient, "Character Selection");
-
-                                                // Create and send login success message
-                                                LoginStateMsg successMsg = new LoginStateMsg();
-                                                successMsg.type = "login";
-                                                successMsg.msg = "success";
-                                                SendLoginStateMsg(chatClient, successMsg);
-
-                                                // Send player list of characters they own
-                                                ownedCharacters = playerDb.GetPlayerCharacters(playerID);
-                                                SendCharacterList(chatClient, playerID);
-
+                                                // Break out of this message receive section
                                                 loggedIn = true;
                                             }
+                                            // Unsuccessful login
                                             else
                                             {
-                                                Console.WriteLine("Login failed");
-
-                                                // Create and send login fail message
-                                                LoginStateMsg failMsg = new LoginStateMsg();
-                                                failMsg.type = "login";
-                                                failMsg.msg = "failed";
-                                                SendLoginStateMsg(chatClient, failMsg);
+                                                // Update list of available characters, and send login failure info to player
+                                                ownedCharacters = SendLogInStateToUser(chatClient, "Log into your master account", "login", "failed", userID);
                                             }
                                         }
                                     }
@@ -290,36 +307,23 @@ namespace Server
                                             Console.WriteLine("Signing up user " + loginDetails.username);
 
                                             // Check if username is in use
-                                            bool userExists = playerDb.CheckForExistingUsername(loginDetails.username);
+                                            bool userExists = playerDB.CheckForExistingUsername(loginDetails.username);
 
                                             if (!userExists)
                                             {
-                                                Console.WriteLine("Sign up success");
-
                                                 // Create user in database
-                                                playerID = playerDb.CreateNewUser(loginDetails.username, loginDetails.password);
+                                                userID = playerDB.CreateNewUser(loginDetails.username, loginDetails.password);
+
+                                                // Update list of available characters, and send sign up success info to player
+                                                ownedCharacters = SendLogInStateToUser(chatClient, "Create Your First Character", "signup", "success", userID);
 
                                                 // Log in user
                                                 loggedIn = true;
-
-                                                // Update title for player
-                                                SendClientID(chatClient, "Create Your First Character");
-
-                                                // Create and send sign up success message
-                                                LoginStateMsg signUpStateMsg = new LoginStateMsg();
-                                                signUpStateMsg.type = "signup";
-                                                signUpStateMsg.msg = "success";
-                                                SendLoginStateMsg(chatClient, signUpStateMsg);
                                             }
                                             else
                                             {
-                                                Console.WriteLine("Sign up failed");
-
-                                                // Create and send failed sign up message
-                                                LoginStateMsg signUpStateMsg = new LoginStateMsg();
-                                                signUpStateMsg.type = "signup";
-                                                signUpStateMsg.msg = "failed";
-                                                SendLoginStateMsg(chatClient, signUpStateMsg);
+                                                // Update list of available characters, and send sign up failure info to player
+                                                ownedCharacters = SendLogInStateToUser(chatClient, "Log into your master account", "signup", "fail", userID);
                                             }
                                         }
                                     }
@@ -341,39 +345,20 @@ namespace Server
                                         CharacterSelectionMsg characterSelection = (CharacterSelectionMsg)m;
                                         Console.WriteLine("Player selected: " + characterSelection.msg);
 
-                                        if(playerDb.DoesUserOwnCharacter(playerID, characterSelection.msg))
+                                        if(playerDB.DoesUserOwnCharacter(userID, characterSelection.msg))
                                         {
-                                            playerName = characterSelection.msg;
+                                            // Update variables for this user
+                                            characterName = characterSelection.msg;
 
-                                            // Title displayed on the client's window
-                                            SendClientID(chatClient, playerName);
+                                            SendCharacterSelectStateToUser(chatClient, characterName, "select", "success", userID);
 
+                                            // Break out of this message recieve section
                                             playerChosen = true;
-                                            // Create and send sign up success message
-                                            LoginStateMsg playerSelectedMsg = new LoginStateMsg();
-                                            playerSelectedMsg.type = "select";
-                                            playerSelectedMsg.msg = "success";
-                                            SendLoginStateMsg(chatClient, playerSelectedMsg);
-
-                                            lock (loggedInSockets)
-                                            {
-                                                Console.WriteLine("Added logged in player with id: " + playerID);
-
-                                                // Add new player to logged in socket dictionary
-                                                loggedInSockets.Add(playerID, chatClient);
-
-                                                Thread.Sleep(500);
-                                                SendClientList();
-                                                SendGlobalChatMessage(playerName + " has just rejoined the dungeon.");
-                                            }
                                         }
                                         else
                                         {
-                                            // Create and send sign up success message
-                                            LoginStateMsg playerSelectedMsg = new LoginStateMsg();
-                                            playerSelectedMsg.type = "select";
-                                            playerSelectedMsg.msg = "fail";
-                                            SendLoginStateMsg(chatClient, playerSelectedMsg);
+                                            // Create and send sign up failure message
+                                            SendCharacterSelectStateToUser(chatClient, characterName, "select", "fail", userID);
                                         }
                                     }
                                     break;
@@ -382,46 +367,21 @@ namespace Server
                                     {
                                         CharacterCreationMsg characterCreation = (CharacterCreationMsg)m;
 
-                                        Console.WriteLine("Creating player with name: " + characterCreation.playerName);
+                                        Console.WriteLine("Creating player with name: " + characterCreation.characterName);
 
-                                        if (playerDb.CheckForExistingPlayerName(characterCreation.playerName))
+                                        if (playerDB.CheckForExistingCharacterName(characterCreation.characterName))
                                         {
-                                            // Create and send sign up success message
-                                            LoginStateMsg playerCreateMsg = new LoginStateMsg();
-                                            playerCreateMsg.type = "create";
-                                            playerCreateMsg.msg = "fail";
-                                            SendLoginStateMsg(chatClient, playerCreateMsg);
+                                            // Create and send player create fail message
+                                            SendCharacterSelectStateToUser(chatClient, characterName, "create", "fail", userID);
                                         }
                                         else
                                         {
-                                            // Create character in database
-                                            playerDb.CreateNewCharacter(characterCreation.playerName, playerID);
-
                                             // Update player name
-                                            playerName = characterCreation.playerName;
+                                            characterName = characterCreation.characterName;
 
-                                            // Title displayed on the client's window
-                                            SendClientID(chatClient, playerName);
+                                            SendCharacterSelectStateToUser(chatClient, characterName, "create", "success", userID);
 
                                             playerChosen = true;
-
-                                            // Create and send sign up success message
-                                            LoginStateMsg playerCreateMsg = new LoginStateMsg();
-                                            playerCreateMsg.type = "create";
-                                            playerCreateMsg.msg = "success";
-                                            SendLoginStateMsg(chatClient, playerCreateMsg);
-
-                                            lock (loggedInSockets)
-                                            {
-                                                Console.WriteLine("Added logged in player with id: " + playerID);
-
-                                                // Add new player to logged in socket dictionary
-                                                loggedInSockets.Add(playerID, chatClient);
-
-                                                Thread.Sleep(500);
-                                                SendClientList();
-                                                SendGlobalChatMessage(playerName + " has just joined the dungeon, give them a warm welcome!");
-                                            }
                                         }
                                     }
                                     break;
@@ -440,9 +400,29 @@ namespace Server
                                     case PublicChatMsg.ID:
                                         {
                                             PublicChatMsg publicMsg = (PublicChatMsg)m;
-                                            String formattedMsg = "<" + clientID + "> " + publicMsg.msg;
-                                            Console.WriteLine("public chat - " + formattedMsg);
-                                            //SendRoomChatMessage(formattedMsg, dungeon.GetPlayerRoom(thisPlayer));
+
+                                            // Split the type of public message from the text
+                                            String [] parsedMessage = publicMsg.msg.Split(':');
+                                            String messageType = parsedMessage[0];
+                                            String messageText = parsedMessage[1];
+
+                                            String formattedMsg = characterName + ": " + messageText;
+
+                                            // Send to all players
+                                            if(messageType == "global")
+                                            {
+                                                PublicChatMsg messageOutput = new PublicChatMsg();
+                                                messageOutput.msg = "Global Chat from " + formattedMsg;
+                                                SendToAllLoggedInPlayers(messageOutput);
+                                            }
+                                            // Send to players in room
+                                            else
+                                            {
+                                                PublicChatMsg messageOutput = new PublicChatMsg();
+                                                messageOutput.msg = "Room Chat from " + formattedMsg;
+                                                // Change to room only
+                                                SendToAllLoggedInPlayers(messageOutput);
+                                            }
                                         }
                                         break;
 
@@ -450,9 +430,10 @@ namespace Server
                                     case PrivateChatMsg.ID:
                                         {
                                             PrivateChatMsg privateMsg = (PrivateChatMsg)m;
-                                            String formattedMsg = "Private message from player " + clientID + ": " + privateMsg.msg;
+                                            String formattedMsg = characterName + ": " + privateMsg.msg;
                                             Console.WriteLine("private chat - " + formattedMsg + "to " + privateMsg.destination);
-                                            //SendPrivateMessage(GetSocketFromPlayerName(privateMsg.destination), playerID, formattedMsg);
+
+                                            //SendPrivateMessage(GetSocketFromCharacterName(privateMsg.destination), playerID, formattedMsg);
                                             formattedMsg = "Sent private message to " + privateMsg.destination + ": " + privateMsg.msg;
                                             //SendPrivateMessage(chatClient, "", formattedMsg);
                                         }
@@ -471,6 +452,8 @@ namespace Server
 
                                                 // Send response
                                                 //SendPrivateMessage(chatClient, "", formattedMsg);
+
+                                                String roomText = GetRoomTextFromCharacterName(characterName);
                                             }
                                         }
                                         break;
@@ -488,10 +471,10 @@ namespace Server
                     Console.WriteLine(e);
 
                     // Remove this client's socket from dictionaries
-                    RemoveClientByID(clientID);
-                    if(playerID > 0)
+                    socketManager.RemoveClientByID(clientID);
+                    if(userID > 0)
                     {
-                        RemovePlayerByID(playerID);
+                        socketManager.RemovePlayerByID(userID);
                     }
 
                     // Update client lists for other players
@@ -519,17 +502,15 @@ namespace Server
                 Thread myThread = new Thread(receiveClientProcess);
                 myThread.Start(serverClient);
 
-                lock (playerSockets)
-                {
-                    // Add new player to socket dictionary
-                    playerSockets.Add(clientID, serverClient);
+                socketManager.AddClientToAllSockets(clientID, serverClient);
 
-                    SendClientID(serverClient, "Log into your master account");
 
-                    Thread.Sleep(500);
+                SendClientID(serverClient, "Log into your master account");
 
-                    clientID++;
-                }
+                Thread.Sleep(500);
+
+                clientID++;
+
                 
             }
         }

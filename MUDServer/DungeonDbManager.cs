@@ -25,6 +25,11 @@ namespace Server
         sqliteConnection dungeonDbConnection = null;
 		sqliteCommand dungeonCommand;
 
+        public DungeonDbManager()
+        {
+            OpenDungeonDatabase();
+        }
+
         // Get and open database
         private void OpenDungeonDatabase()
         {
@@ -39,6 +44,18 @@ namespace Server
             {
                 Console.WriteLine("Open dungeon DB failed: " + ex);
             }
+        }
+
+        public String GetRoomText(int roomID)
+        {
+            dungeonCommand = new sqliteCommand("select Description from Rooms where ID ='" + roomID + "'", dungeonDbConnection);
+            var reader = dungeonCommand.ExecuteReader();
+
+            while (reader.Read())
+            {
+                return reader[0].ToString();
+            }
+            return "";
         }
     }
 }

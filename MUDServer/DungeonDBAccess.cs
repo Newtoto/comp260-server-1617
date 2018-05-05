@@ -20,12 +20,12 @@ using sqliteDataReader = System.Data.SQLite.SQLiteDataReader;
 
 namespace Server
 {
-    class DungeonDB
+    class DungeonDBAccess
     {
         sqliteConnection dungeonDbConnection = null;
 		sqliteCommand dungeonCommand;
 
-        public DungeonDB()
+        public DungeonDBAccess()
         {
             OpenDungeonDatabase();
         }
@@ -48,14 +48,44 @@ namespace Server
 
         public String GetRoomText(int roomID)
         {
-            dungeonCommand = new sqliteCommand("select Description from Rooms where ID ='" + roomID + "'", dungeonDbConnection);
+            // Get description
+            dungeonCommand = new sqliteCommand("select Name from Rooms where ID ='" + roomID + "'", dungeonDbConnection);
+
+            string roomText = "";
+
             var reader = dungeonCommand.ExecuteReader();
 
             while (reader.Read())
             {
-                return reader[0].ToString();
+                roomText += "You find yourself in the " + reader[0].ToString() + ". ";
             }
-            return "";
+
+            // Get description
+            dungeonCommand = new sqliteCommand("select Description from Rooms where ID ='" + roomID + "'", dungeonDbConnection);
+
+            reader = dungeonCommand.ExecuteReader();
+
+            while (reader.Read())
+            {
+                roomText += reader[0].ToString();
+            }
+
+            return roomText;
+        }
+
+        // Returns room ID of the chosen exit
+        public int GetRoomExit(string direction, int currentRoomID)
+        {
+            dungeonCommand = new sqliteCommand("select " + direction + " from Rooms where ID ='" + currentRoomID + "'", dungeonDbConnection);
+
+            var reader = dungeonCommand.ExecuteReader();
+
+            while (reader.Read())
+            {
+                return int.Parse(string.Format("{0}", reader[0]));
+            }
+
+            return 0;
         }
     }
 }

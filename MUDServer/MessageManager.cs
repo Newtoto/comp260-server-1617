@@ -15,5 +15,19 @@ namespace Server
 {
     class MessageManager
     {
+        // Sends message to socket
+        public void SendMessageToSocket(Socket s, Msg message)
+        {
+            MemoryStream outStream = message.WriteData();
+
+            s.Send(outStream.GetBuffer());
+        }
+
+        public void SendPrivateMessageToSocket(Socket s, PrivateChatMsg message)
+        {
+            MemoryStream outStream = message.WriteData();
+
+            s.Send(outStream.GetBuffer());
+        }
     }
 }

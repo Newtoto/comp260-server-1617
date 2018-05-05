@@ -20,34 +20,21 @@ using sqliteDataReader = System.Data.SQLite.SQLiteDataReader;
 
 namespace Server
 {
-    class CharacterDB
+    class UserDBAccess
     {
-        sqliteConnection characterDBConnection = null;
-		sqliteCommand characterCommand;
         sqliteConnection userDBConnection = null;
 		sqliteCommand userCommand;
 
-        public CharacterDB()
+        public UserDBAccess()
         {
-            OpenDatabases();
+            OpenDatabase();
         }
 
         // Get and open database
-        private void OpenDatabases()
+        private void OpenDatabase()
         {
-            // Link databases
-            characterDBConnection = new sqliteConnection("Data Source =" + "players.db" + ";Version=3;FailIfMissing=True");
+            // Link database
             userDBConnection = new sqliteConnection("Data Source =" + "users.db" + ";Version=3;FailIfMissing=True");
-
-            try
-            {
-                characterDBConnection.Open();
-                Console.WriteLine("opened player db");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Open player DB failed: " + ex);
-            }
 
             try
             {
@@ -58,21 +45,6 @@ namespace Server
             {
                 Console.WriteLine("Open user DB failed: " + ex);
             }
-        }
-
-        // Get the roomId of the room the player is in
-        public int GetCharacterRoom(String characterName)
-        {
-            characterCommand = new sqliteCommand("select CurrentRoom from PlayerInfo where Name ='" + characterName + "'", characterDBConnection);
-
-            var reader = characterCommand.ExecuteReader();
-
-            while (reader.Read())
-            {
-                return int.Parse(string.Format("{0}", reader[0]));
-            }
-
-            return 0;
         }
 
         // Returns the playerID of user with matching name and password
@@ -111,37 +83,9 @@ namespace Server
             return reader.Read();
         }
 
-        // Checks character database for existing playername
-        public bool CheckForExistingCharacterName(string characterName)
-        {
-            characterCommand = new sqliteCommand("select * from PlayerInfo where Name ='" + characterName + "'", characterDBConnection);
-
-            var reader = characterCommand.ExecuteReader();
-
-            return reader.Read();
-        }
-
-        // Gets a list of all the characters owned by a player
-        public List<String> GetPlayerCharacters(int userID)
-        {
-            characterCommand = new sqliteCommand("select Name from PlayerInfo where Owner ='" + userID + "'", characterDBConnection);
-            List<String> characterList = new List<String>();
-
-            var reader = characterCommand.ExecuteReader();
-
-            while (reader.Read())
-            {
-                Console.WriteLine(reader[0]);
-                characterList.Add(reader[0].ToString());
-            }
-
-            return characterList;
-        }
-
         // Double checks the right owner is accessing the character, used for hacker protection
-        public bool DoesUserOwnCharacter(int playerID, String selectedCharacter)
+        public bool DoesUserOwnCharacter(int playerID, String selectedCharacter, List<String> characterList)
         {
-            List<String> characterList = GetPlayerCharacters(playerID);
 
             foreach (String characterName in characterList)
             {
@@ -200,28 +144,6 @@ namespace Server
             }
 
             return largestPlayerID;
-        }
-
-        // Makes new character and associates with player
-        public void CreateNewCharacter(String characterName, int owner)
-        {
-            try
-            {
-                var sql = "insert into " + "PlayerInfo" + " (Owner, Name, CurrentRoom) values ";
-                sql += "('" + owner + "'";
-                sql += ",";
-                sql += "'" + characterName + "'";
-                sql += ",";
-                sql += "'" + 1 + "'";
-                sql += ")";
-
-                characterCommand = new sqliteCommand(sql, characterDBConnection);
-                characterCommand.ExecuteNonQuery();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Failed to add: " + characterName + " to DB " + ex);
-            }
         }
     }
 }

@@ -16,6 +16,7 @@ namespace Server
         public Dictionary<int, Socket> playerSockets = new Dictionary<int, Socket>();
         public Dictionary<int, Socket> loggedInSockets = new Dictionary<int, Socket>();
         public Dictionary<Socket, string> socketToCharacterName = new Dictionary<Socket, string>();
+        public Dictionary<string, Socket> characterNameToSocket = new Dictionary<string, Socket>();
 
         public SocketManager()
         {
@@ -48,14 +49,40 @@ namespace Server
 
 
         // Remove player from dictionary
-        public void RemovePlayerByID(int playerID)
+        public void RemovePlayerByID(int playerID, Socket s)
         {
             Console.WriteLine("Removing player " + playerID);
+
             lock (loggedInSockets)
             {
                 try
                 {
                     loggedInSockets.Remove(playerID);
+                }
+                catch
+                {
+                    // Player wasn't logged in
+                }
+            }
+            lock (socketToCharacterName)
+            {
+                try
+                {
+                    socketToCharacterName.Remove(s);
+
+                    // Remove from reverse dictionary
+                    string characterName = socketToCharacterName[s];
+                    lock (characterNameToSocket)
+                    {
+                        try
+                        {
+                            characterNameToSocket.Remove(characterName);
+                        }
+                        catch
+                        {
+                            // Player wasn't logged in
+                        }
+                    }
                 }
                 catch
                 {
@@ -85,6 +112,24 @@ namespace Server
             {
                 // Add character to dictionary
                 socketToCharacterName.Add(s, characterName);
+            }
+
+            lock (characterNameToSocket)
+            {
+                // Add character to reverse dictionary
+                characterNameToSocket.Add(characterName, s);
+            }
+        }
+
+        public Socket GetSocketFromCharacterName(string characterName)
+        {
+            try
+            {
+                return characterNameToSocket[characterName];
+            }
+            catch
+            {
+                return null;
             }
         }
     }

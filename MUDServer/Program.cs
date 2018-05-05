@@ -433,17 +433,16 @@ namespace Server
                                             Console.WriteLine("Sending private message from " + characterName + " to " + privateMsg.destination);
 
 											Socket targetSocket = socketManager.GetSocketFromCharacterName(privateMsg.destination);
+                                            
+											// Send feedback to original sender
+                                            privateMsg.msg = "You to " + privateMsg.destination + ": " + privateMsg.msg;
+                                            messageManager.SendMessageToSocket(chatClient, privateMsg);
 
-                                            // Append message with sender's name
+                                            // Send message to target
                                             privateMsg.msg = "Private message from " + characterName + ": " + privateMsg.msg;
 
                                             messageManager.SendMessageToSocket(targetSocket, privateMsg);
-
-											Thread.Sleep(500);
-
-                                            // Send feedback to original sender
-											privateMsg.msg = "You to " + privateMsg.destination + ": " + privateMsg.msg;
-											messageManager.SendMessageToSocket(chatClient, privateMsg);
+                                            
 										}
                                         break;
 

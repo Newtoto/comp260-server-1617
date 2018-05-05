@@ -45,7 +45,7 @@ namespace MUDClient
                 {
                     form.client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                     // Server IP 138.68.161.95, test 127.0.0.1
-                    form.client.Connect(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8500));
+                    form.client.Connect(new IPEndPoint(IPAddress.Parse("138.68.161.95"), 8500));
                     form.bConnected = true;
                     form.AddText("Connected to server");
 

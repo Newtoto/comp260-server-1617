@@ -49,7 +49,7 @@ namespace Server
 
 
         // Remove player from dictionary
-        public void RemovePlayerByID(int playerID, Socket s)
+        public void RemovePlayerByID(int playerID, Socket s, string characterName)
         {
             Console.WriteLine("Removing player " + playerID);
 
@@ -68,21 +68,18 @@ namespace Server
             {
                 try
                 {
-                    socketToCharacterName.Remove(s);
-
-                    // Remove from reverse dictionary
-                    string characterName = socketToCharacterName[s];
-                    lock (characterNameToSocket)
-                    {
-                        try
-                        {
-                            characterNameToSocket.Remove(characterName);
-                        }
-                        catch
-                        {
-                            // Player wasn't logged in
-                        }
-                    }
+					socketToCharacterName.Remove(s);
+                }
+                catch
+                {
+                    // Player wasn't logged in
+                }
+            }
+			lock (characterNameToSocket)
+            {
+                try
+                {
+					characterNameToSocket.Remove(characterName);
                 }
                 catch
                 {

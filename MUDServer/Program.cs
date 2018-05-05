@@ -496,7 +496,7 @@ namespace Server
                     socketManager.RemoveClientByID(clientID);
                     if(userID > 0)
                     {
-                        socketManager.RemovePlayerByID(userID, chatClient);
+                        socketManager.RemovePlayerByID(userID, chatClient, characterName);
                     }
 
                     // Update client lists for other players

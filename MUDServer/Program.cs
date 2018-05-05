@@ -110,7 +110,6 @@ namespace Server
             }
         }
 
-        // TODO remove????
         // Tells user if login or signup was successful
         static void SendLoginStateMsg(Socket s, LoginStateMsg message)
         {
@@ -139,12 +138,53 @@ namespace Server
 
             // Send list to all logged in players
             MemoryStream outStream = message.WriteData();
-            foreach (KeyValuePair<int, Socket> s in socketManager.loggedInSockets)
+            lock(socketManager.loggedInSockets)
             {
-                s.Value.Send(outStream.GetBuffer());
+                foreach (KeyValuePair<int, Socket> s in socketManager.loggedInSockets)
+                {
+                    s.Value.Send(outStream.GetBuffer());
+                }
             }
         }
-        
+
+        // Send message to all players in the same room as the character
+        static void SendRoomChatMessage(PublicChatMsg message, string characterName)
+        {
+            // Get room from characterName
+            int roomID = characterDB.GetCharacterRoom(characterName);
+            string roomName = dungeonDB.GetRoomNameFromID(roomID);
+            message.msg = roomName + " " + message.msg;
+
+            List<string> charactersInRoom = characterDB.GetCharactersInRoom(roomID);
+            List<Socket> targetSockets = new List<Socket>();
+
+            foreach (string name in charactersInRoom)
+            {
+                targetSockets.Add(socketManager.GetSocketFromCharacterName(name));
+            }
+
+            Console.WriteLine("Sending to all players in " + roomName);
+
+            // Send list to all characters in room
+            //SendToSocketList(message, targetSockets);
+            MemoryStream outStream = message.WriteData();
+
+            foreach (Socket s in targetSockets)
+            {
+                s.Send(outStream.GetBuffer());
+            }
+        }
+
+        static void SendToSocketList(Msg message, List<Socket> socketList)
+        {
+            MemoryStream outStream = message.WriteData();
+
+            foreach (Socket s in socketList)
+            {
+                s.Send(outStream.GetBuffer());
+            }
+        }
+
         // Sends list of logged in players
         static void SendClientList()
         {
@@ -184,30 +224,6 @@ namespace Server
             MemoryStream outStream = chatMsg.WriteData();
 
             SendToAllLoggedInPlayers(chatMsg);
-
-        }
-
-        static void SendRoomChatMessage(String msg, int playerID)
-        {
-            Console.WriteLine("Sending message to everyone in room.");
-
-            // TODO PlayerDB SQL query with current playerID to get room ID
-            int targetRoomID = 0;
-
-
-            // TODO Use targetRoomID to get all players with same roomID
-
-            // Create chat message
-            // TODO Use query with room ID to get name
-            string roomName = "";
-
-            PublicChatMsg chatMsg = new PublicChatMsg();
-            chatMsg.msg = roomName + ": " + msg;
-            MemoryStream outStream = chatMsg.WriteData();
-
-            // Send the message to each player
-            //Socket playerSocket;
-            //playerSocket.Value.socket.Send(outStream.GetBuffer());
 
         }
 
@@ -420,7 +436,7 @@ namespace Server
                                                 PublicChatMsg messageOutput = new PublicChatMsg();
                                                 messageOutput.msg = "Room Chat from " + formattedMsg;
                                                 // Change to room only
-                                                SendToAllLoggedInPlayers(messageOutput);
+                                                SendRoomChatMessage(messageOutput, characterName);
                                             }
                                         }
                                         break;
@@ -515,7 +531,7 @@ namespace Server
             Socket serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
             // Server IP 138.68.161.95, test 127.0.0.1
-			serverSocket.Bind(new IPEndPoint(IPAddress.Parse("138.68.161.95"), 8500));
+			serverSocket.Bind(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8500));
             serverSocket.Listen(32);
 
             bool bQuit = false;

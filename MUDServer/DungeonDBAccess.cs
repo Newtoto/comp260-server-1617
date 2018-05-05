@@ -48,7 +48,7 @@ namespace Server
 
         public String GetRoomText(int roomID)
         {
-            // Get description
+            // Get name
             dungeonCommand = new sqliteCommand("select Name from Rooms where ID ='" + roomID + "'", dungeonDbConnection);
 
             string roomText = "";
@@ -71,6 +71,23 @@ namespace Server
             }
 
             return roomText;
+        }
+
+        public String GetRoomNameFromID(int roomID)
+        {
+            // Get description
+            dungeonCommand = new sqliteCommand("select Name from Rooms where ID ='" + roomID + "'", dungeonDbConnection);
+
+            string roomName = "";
+
+            var reader = dungeonCommand.ExecuteReader();
+
+            while (reader.Read())
+            {
+                roomName = reader[0].ToString();
+            }
+
+            return roomName;
         }
 
         // Returns room ID of the chosen exit

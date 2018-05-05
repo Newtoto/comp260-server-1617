@@ -47,11 +47,13 @@
             this.loginPanel = new MetroFramework.Controls.MetroPanel();
             this.mudPanel = new MetroFramework.Controls.MetroPanel();
             this.playerSelectPanel = new MetroFramework.Controls.MetroPanel();
+            this.selectPlayer = new MetroFramework.Controls.MetroTile();
+            this.createPlayer = new MetroFramework.Controls.MetroTile();
             this.availableCharacters = new System.Windows.Forms.ListBox();
             this.playerName = new MetroFramework.Controls.MetroLabel();
             this.displayNameInput = new MetroFramework.Controls.MetroTextBox();
-            this.createPlayer = new MetroFramework.Controls.MetroTile();
-            this.selectPlayer = new MetroFramework.Controls.MetroTile();
+            this.label1 = new System.Windows.Forms.Label();
+            this.characterSelectErrors = new System.Windows.Forms.Label();
             this.loginPanel.SuspendLayout();
             this.mudPanel.SuspendLayout();
             this.playerSelectPanel.SuspendLayout();
@@ -324,6 +326,8 @@
             // 
             // playerSelectPanel
             // 
+            this.playerSelectPanel.Controls.Add(this.characterSelectErrors);
+            this.playerSelectPanel.Controls.Add(this.label1);
             this.playerSelectPanel.Controls.Add(this.selectPlayer);
             this.playerSelectPanel.Controls.Add(this.createPlayer);
             this.playerSelectPanel.Controls.Add(this.availableCharacters);
@@ -340,6 +344,28 @@
             this.playerSelectPanel.VerticalScrollbarBarColor = true;
             this.playerSelectPanel.VerticalScrollbarHighlightOnWheel = false;
             this.playerSelectPanel.VerticalScrollbarSize = 10;
+            // 
+            // selectPlayer
+            // 
+            this.selectPlayer.ActiveControl = null;
+            this.selectPlayer.Location = new System.Drawing.Point(229, 16);
+            this.selectPlayer.Name = "selectPlayer";
+            this.selectPlayer.Size = new System.Drawing.Size(175, 54);
+            this.selectPlayer.TabIndex = 10;
+            this.selectPlayer.Text = "Select Existing Player";
+            this.selectPlayer.UseSelectable = true;
+            this.selectPlayer.Click += new System.EventHandler(this.selectPlayer_Click);
+            // 
+            // createPlayer
+            // 
+            this.createPlayer.ActiveControl = null;
+            this.createPlayer.Location = new System.Drawing.Point(16, 16);
+            this.createPlayer.Name = "createPlayer";
+            this.createPlayer.Size = new System.Drawing.Size(175, 54);
+            this.createPlayer.TabIndex = 10;
+            this.createPlayer.Text = "Create New Player";
+            this.createPlayer.UseSelectable = true;
+            this.createPlayer.Click += new System.EventHandler(this.createPlayer_Click);
             // 
             // availableCharacters
             // 
@@ -390,27 +416,24 @@
             this.displayNameInput.WaterMarkFont = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Pixel);
             this.displayNameInput.Click += new System.EventHandler(this.displayNameInput_Click);
             // 
-            // createPlayer
+            // label1
             // 
-            this.createPlayer.ActiveControl = null;
-            this.createPlayer.Location = new System.Drawing.Point(16, 16);
-            this.createPlayer.Name = "createPlayer";
-            this.createPlayer.Size = new System.Drawing.Size(175, 54);
-            this.createPlayer.TabIndex = 10;
-            this.createPlayer.Text = "Create New Player";
-            this.createPlayer.UseSelectable = true;
-            this.createPlayer.Click += new System.EventHandler(this.createPlayer_Click);
+            this.label1.AutoSize = true;
+            this.label1.ForeColor = System.Drawing.Color.DarkRed;
+            this.label1.Location = new System.Drawing.Point(14, 192);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(0, 13);
+            this.label1.TabIndex = 11;
             // 
-            // selectPlayer
+            // characterSelectErrors
             // 
-            this.selectPlayer.ActiveControl = null;
-            this.selectPlayer.Location = new System.Drawing.Point(229, 16);
-            this.selectPlayer.Name = "selectPlayer";
-            this.selectPlayer.Size = new System.Drawing.Size(175, 54);
-            this.selectPlayer.TabIndex = 10;
-            this.selectPlayer.Text = "Select Existing Player";
-            this.selectPlayer.UseSelectable = true;
-            this.selectPlayer.Click += new System.EventHandler(this.selectPlayer_Click);
+            this.characterSelectErrors.AutoSize = true;
+            this.characterSelectErrors.ForeColor = System.Drawing.Color.DarkRed;
+            this.characterSelectErrors.Location = new System.Drawing.Point(21, 191);
+            this.characterSelectErrors.Name = "characterSelectErrors";
+            this.characterSelectErrors.Size = new System.Drawing.Size(35, 13);
+            this.characterSelectErrors.TabIndex = 12;
+            this.characterSelectErrors.Text = "label2";
             // 
             // Mud
             // 
@@ -461,6 +484,8 @@
         private System.Windows.Forms.ListBox availableCharacters;
         private MetroFramework.Controls.MetroTile createPlayer;
         private MetroFramework.Controls.MetroTile selectPlayer;
+        private System.Windows.Forms.Label characterSelectErrors;
+        private System.Windows.Forms.Label label1;
     }
 }
 

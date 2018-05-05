@@ -144,7 +144,7 @@ namespace MUDClient
                                                     {
                                                         Console.WriteLine("Login success, enabling player select panel");
                                                         form.EnablePlayerSelect();
-                                                        //form.AddError("Success");
+                                                        form.AddError("");
                                                     }
                                                     else
                                                     {
@@ -159,6 +159,7 @@ namespace MUDClient
                                                     {
                                                         Console.WriteLine("Login success, enabling player select panel");
                                                         form.EnablePlayerSelect();
+                                                        form.AddError("");
                                                     }
                                                     else
                                                     {
@@ -192,7 +193,7 @@ namespace MUDClient
                                                     else
                                                     {
                                                         // Failed character creation
-                                                        Console.WriteLine("Character name already exists");
+                                                        form.AddError("Character name already in use.");
                                                     }
                                                 }
                                                 break;
@@ -217,7 +218,11 @@ namespace MUDClient
                 catch (Exception)
                 {
                     form.bConnected = false;
-                    Console.WriteLine("Lost server!");
+                    if (!form.bQuit)
+                    {
+                        MessageBox.Show("Disconnected from server, closing application", "Connection Lost", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
+                        Application.Exit();
+                    }
                 }
 
             }
@@ -423,6 +428,15 @@ namespace MUDClient
             else
             {
                 errorDisplay.Text = s;
+            }
+
+            if (characterSelectErrors.InvokeRequired)
+            {
+                Invoke(new AddErrorDelegate(AddError), new object[] { s });
+            }
+            else
+            {
+                characterSelectErrors.Text = s;
             }
         }
 

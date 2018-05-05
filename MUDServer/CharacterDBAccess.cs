@@ -82,7 +82,6 @@ namespace Server
 
             while (reader.Read())
             {
-                Console.WriteLine(reader[0]);
                 characterList.Add(reader[0].ToString());
             }
 
@@ -143,6 +142,21 @@ namespace Server
                     Console.WriteLine("Failed to add: " + characterName + " to DB " + ex);
                 }
             }
+        }
+
+        public List<String> GetCharactersInRoom(int roomID)
+        {
+            characterCommand = new sqliteCommand("select Name from PlayerInfo where CurrentRoom ='" + roomID + "'", characterDBConnection);
+            List<String> characterList = new List<String>();
+
+            var reader = characterCommand.ExecuteReader();
+
+            while (reader.Read())
+            {
+                characterList.Add(reader[0].ToString());
+            }
+
+            return characterList;
         }
     }
 }

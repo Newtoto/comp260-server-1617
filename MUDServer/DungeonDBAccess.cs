@@ -20,12 +20,12 @@ using sqliteDataReader = System.Data.SQLite.SQLiteDataReader;
 
 namespace Server
 {
-    class DungeonDbManager
+    class DungeonDB
     {
         sqliteConnection dungeonDbConnection = null;
 		sqliteCommand dungeonCommand;
 
-        public DungeonDbManager()
+        public DungeonDB()
         {
             OpenDungeonDatabase();
         }

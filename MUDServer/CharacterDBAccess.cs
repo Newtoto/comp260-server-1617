@@ -20,14 +20,14 @@ using sqliteDataReader = System.Data.SQLite.SQLiteDataReader;
 
 namespace Server
 {
-    class PlayerDbManager
+    class CharacterDB
     {
         sqliteConnection characterDBConnection = null;
 		sqliteCommand characterCommand;
         sqliteConnection userDBConnection = null;
 		sqliteCommand userCommand;
 
-        public PlayerDbManager()
+        public CharacterDB()
         {
             OpenDatabases();
         }

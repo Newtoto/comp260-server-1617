@@ -48,26 +48,14 @@ namespace Server
 
 
         // Remove player from dictionary
-        public void RemovePlayerByID(int playerID, Socket s)
+        public void RemovePlayerByID(int playerID)
         {
             Console.WriteLine("Removing player " + playerID);
-
             lock (loggedInSockets)
             {
                 try
                 {
                     loggedInSockets.Remove(playerID);
-                }
-                catch
-                {
-                    // Player wasn't logged in
-                }
-            }
-            lock (socketToCharacterName)
-            {
-                try
-                {
-                    socketToCharacterName.Remove(s);
                 }
                 catch
                 {

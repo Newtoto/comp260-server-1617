@@ -63,17 +63,11 @@
     <Compile Include="..\..\Dungeon.cs">
       <Link>Dungeon.cs</Link>
     </Compile>
-    <Compile Include="..\..\DungeonDbManager.cs">
-      <Link>DungeonDbManager.cs</Link>
-    </Compile>
     <Compile Include="..\..\MessageTypes.cs">
       <Link>MessageTypes.cs</Link>
     </Compile>
     <Compile Include="..\..\Player.cs">
       <Link>Player.cs</Link>
-    </Compile>
-    <Compile Include="..\..\PlayerDbManager.cs">
-      <Link>PlayerDbManager.cs</Link>
     </Compile>
     <Compile Include="..\..\Program.cs">
       <Link>Program.cs</Link>
@@ -84,8 +78,13 @@
     <Compile Include="..\..\sql_example.cs">
       <Link>sql_example.cs</Link>
     </Compile>
+    <Compile Include="CharacterDBAccess.cs" />
+    <Compile Include="DatabaseController.cs" />
+    <Compile Include="DungeonDBAccess.cs" />
+    <Compile Include="MessageManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SocketManager.cs" />
+    <Compile Include="UserDBAccess.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\dungeon.db">

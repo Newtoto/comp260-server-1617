@@ -30,19 +30,15 @@ namespace Server
     class Program
     {
         static SocketManager socketManager = new SocketManager();
+        static MessageManager messageManager = new MessageManager();
 
-        static PlayerDbManager playerDB = new PlayerDbManager();
-        static DungeonDbManager dungeonDB = new DungeonDbManager();
+        static DatabaseController databaseController = new DatabaseController();
+        static DungeonDBAccess dungeonDB = databaseController.dungeonDB;
+        static UserDBAccess userDB = databaseController.userDB;
+        static CharacterDBAccess characterDB = databaseController.characterDB;
+
 
         static int clientID = 1;
-
-        // Sends message to socket
-        static void SendMessageToSocket(Socket s, Msg message)
-        {
-            MemoryStream outStream = message.WriteData();
-
-            s.Send(outStream.GetBuffer());
-        }
 
         // Log in / sign up user process
         static List<String> SendLogInStateToUser(Socket s, String newTitle, String messageType, String loginSuccess, int userID)
@@ -59,7 +55,7 @@ namespace Server
             SendLoginStateMsg(s, successMsg);
 
             // Send player list of characters they own
-            return playerDB.GetPlayerCharacters(userID);
+            return characterDB.GetPlayerCharacters(userID);
         }
 
         // Character select / create user process
@@ -92,7 +88,7 @@ namespace Server
                 else
                 {
                     // Create character in database
-                    playerDB.CreateNewCharacter(characterName, userID);
+                    characterDB.CreateNewCharacter(characterName, userID);
 
                     SendGlobalChatMessage(characterName + " has just rejoined the dungeon.");
                 }
@@ -106,7 +102,7 @@ namespace Server
                 // Create and send room text
                 PublicChatMsg roomText = new PublicChatMsg();
                 roomText.msg = GetRoomTextFromCharacterName(characterName);
-                SendMessageToSocket(s, roomText);
+                messageManager.SendMessageToSocket(s, roomText);
             }
         }
 
@@ -154,6 +150,7 @@ namespace Server
             {
                 foreach (KeyValuePair<Socket, string> s in socketManager.socketToCharacterName)
                 {
+
                     // Add user to list
                     clientListMsg.clientList.Add(s.Value);
                 }
@@ -167,9 +164,9 @@ namespace Server
         {
             CharacterListMsg characterListMsg = new CharacterListMsg();
 
-            characterListMsg.characterList = playerDB.GetPlayerCharacters(playerID);
+            characterListMsg.characterList = characterDB.GetPlayerCharacters(playerID);
 
-            SendMessageToSocket(s, characterListMsg);
+            messageManager.SendMessageToSocket(s, characterListMsg);
         }
 
         // Send chat message to all users
@@ -214,7 +211,7 @@ namespace Server
         static String GetRoomTextFromCharacterName(String characterName)
         {
             // Get room ID from characterName
-            int roomID = playerDB.GetCharacterRoom(characterName);
+            int roomID = characterDB.GetCharacterRoom(characterName);
 
             return dungeonDB.GetRoomText(roomID);
         }
@@ -274,7 +271,7 @@ namespace Server
                                             Console.WriteLine("Logging in user " + loginDetails.username);
 
                                             // Update userID using database
-                                            userID = playerDB.LoginUser(loginDetails.username, loginDetails.password);
+                                            userID = userDB.LoginUser(loginDetails.username, loginDetails.password);
 
                                             // Successful login
                                             if (userID > 0)
@@ -304,12 +301,12 @@ namespace Server
                                             Console.WriteLine("Signing up user " + loginDetails.username);
 
                                             // Check if username is in use
-                                            bool userExists = playerDB.CheckForExistingUsername(loginDetails.username);
+                                            bool userExists = userDB.CheckForExistingUsername(loginDetails.username);
 
                                             if (!userExists)
                                             {
                                                 // Create user in database
-                                                userID = playerDB.CreateNewUser(loginDetails.username, loginDetails.password);
+                                                userID = userDB.CreateNewUser(loginDetails.username, loginDetails.password);
 
                                                 // Update list of available characters, and send sign up success info to player
                                                 ownedCharacters = SendLogInStateToUser(chatClient, "Create Your First Character", "signup", "success", userID);
@@ -342,7 +339,9 @@ namespace Server
                                         CharacterSelectionMsg characterSelection = (CharacterSelectionMsg)m;
                                         Console.WriteLine("Player selected: " + characterSelection.msg);
 
-                                        if(playerDB.DoesUserOwnCharacter(userID, characterSelection.msg))
+                                        List<String> characterList = databaseController.characterDB.GetPlayerCharacters(userID);
+
+                                        if (characterDB.DoesUserOwnCharacter(userID, characterSelection.msg))
                                         {
                                             // Update variables for this user
                                             characterName = characterSelection.msg;
@@ -366,7 +365,7 @@ namespace Server
 
                                         Console.WriteLine("Creating player with name: " + characterCreation.characterName);
 
-                                        if (playerDB.CheckForExistingCharacterName(characterCreation.characterName))
+                                        if (characterDB.CheckForExistingCharacterName(characterCreation.characterName))
                                         {
                                             // Create and send player create fail message
                                             SendCharacterSelectStateToUser(chatClient, characterName, "create", "fail", userID);
@@ -471,7 +470,7 @@ namespace Server
                     socketManager.RemoveClientByID(clientID);
                     if(userID > 0)
                     {
-                        socketManager.RemovePlayerByID(userID);
+                        socketManager.RemovePlayerByID(userID, chatClient);
                     }
 
                     // Update client lists for other players

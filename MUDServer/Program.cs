@@ -94,6 +94,8 @@ namespace Server
 
                     SendGlobalChatMessage(characterName + " has just rejoined the dungeon.");
                 }
+				// Allow previous message to go through
+                Thread.Sleep(500);
 
                 // Send list of logged in character names
                 SendClientList();

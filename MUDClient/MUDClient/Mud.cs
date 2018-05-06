@@ -14,6 +14,9 @@ using System.Net.Sockets;
 using System.Threading;
 using System.IO;
 
+// Password hashing
+using System.Security.Cryptography;
+
 using MessageTypes;
 
 namespace MUDClient
@@ -523,6 +526,12 @@ namespace MUDClient
         }
 
         // Logging in stuff
+        public byte[] GenerateHash(byte[] plainText)
+        {
+            HashAlgorithm algorithm = new SHA256Managed();
+
+            return algorithm.ComputeHash(plainText);
+        }
 
         // Sends navigation message to server
         private void createLoginMessageFromStrings(String userName, String password, String loginType)
@@ -537,8 +546,9 @@ namespace MUDClient
                         // Create login message
                         LoginAttempt loginMessage = new LoginAttempt();
                         loginMessage.username = userName;
-                        loginMessage.password = password;
-
+                        var hash = GenerateHash(Encoding.UTF8.GetBytes(password));
+                        loginMessage.password = Convert.ToBase64String(hash);
+                        Console.WriteLine("hash: " + loginMessage.password);
                         MemoryStream outStream = loginMessage.WriteData();
                         client.Send(outStream.GetBuffer());
                     }
@@ -547,7 +557,8 @@ namespace MUDClient
                         // Create sign up message
                         SignUpAttempt signUpMessage = new SignUpAttempt();
                         signUpMessage.username = userName;
-                        signUpMessage.password = password;
+                        var hash = GenerateHash(Encoding.UTF8.GetBytes(password));
+                        signUpMessage.password = Convert.ToBase64String(hash);
 
                         MemoryStream outStream = signUpMessage.WriteData();
                         client.Send(outStream.GetBuffer());

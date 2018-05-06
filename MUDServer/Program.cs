@@ -546,7 +546,7 @@ namespace Server
             Socket serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
             // Server IP 138.68.161.95, test 127.0.0.1
-			serverSocket.Bind(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8500));
+			serverSocket.Bind(new IPEndPoint(IPAddress.Parse("138.68.161.95"), 8500));
             serverSocket.Listen(32);
 
             bool bQuit = false;

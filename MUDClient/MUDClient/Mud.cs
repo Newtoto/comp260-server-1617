@@ -373,6 +373,11 @@ namespace MUDClient
             }
         }
 
+        private bool HasSpecialChars(string input)
+        {
+            return input.Any(ch => !Char.IsLetterOrDigit(ch));
+        }
+
         private string RemoveSpecialCharacters(string input)
         {
             StringBuilder sb = new StringBuilder();
@@ -596,29 +601,43 @@ namespace MUDClient
 
         private void loginButton_Click(object sender, EventArgs e)
         {
-            if (usernameInput.Text.Length > 0 && passwordInput.Text.Length > 0)
+            if (HasSpecialChars(usernameInput.Text))
             {
-                errorDisplay.Text = "";
-                createLoginMessageFromStrings(usernameInput.Text, passwordInput.Text, "login");
+                AddError("No special characters allowed in username.");
             }
             else
             {
-                // Display error message
-                errorDisplay.Text = "Username and password fields must be filled.";
+                if (usernameInput.Text.Length > 0 && passwordInput.Text.Length > 0)
+                {
+                    errorDisplay.Text = "";
+                    createLoginMessageFromStrings(usernameInput.Text, passwordInput.Text, "login");
+                }
+                else
+                {
+                    // Display error message
+                    errorDisplay.Text = "Username and password fields must be filled.";
+                }
             }
         }
 
         private void signUpButton_Click(object sender, EventArgs e)
         {
-            if (usernameInput.Text.Length > 0 && passwordInput.Text.Length > 0)
+            if (HasSpecialChars(usernameInput.Text))
             {
-                errorDisplay.Text = "";
-                createLoginMessageFromStrings(usernameInput.Text, passwordInput.Text, "sign up");
+                AddError("No special characters allowed in username.");
             }
             else
             {
-                // Display error message
-                errorDisplay.Text = "Username and password fields must be filled.";
+                if (usernameInput.Text.Length > 0 && passwordInput.Text.Length > 0)
+                {
+                    errorDisplay.Text = "";
+                    createLoginMessageFromStrings(usernameInput.Text, passwordInput.Text, "sign up");
+                }
+                else
+                {
+                    // Display error message
+                    errorDisplay.Text = "Username and password fields must be filled.";
+                }
             }
         }
 
@@ -629,20 +648,28 @@ namespace MUDClient
 
         private void createPlayer_Click(object sender, EventArgs e)
         {
-            try
-            {
-                // Create character select message
-                CharacterCreationMsg characterCreation = new CharacterCreationMsg();
-                characterCreation.characterName = displayNameInput.Text;
-
-                MemoryStream outStream = characterCreation.WriteData();
-                client.Send(outStream.GetBuffer());
-
-                Console.WriteLine("Creating character with name: " + displayNameInput.Text);
-            }
-            catch
+            if(HasSpecialChars(displayNameInput.Text))
             {
                 Console.WriteLine("Could not create character");
+                AddError("No special characters allowed.");
+            }
+            else
+            {
+                try
+                {
+                    // Create character select message
+                    CharacterCreationMsg characterCreation = new CharacterCreationMsg();
+                    characterCreation.characterName = displayNameInput.Text;
+
+                    MemoryStream outStream = characterCreation.WriteData();
+                    client.Send(outStream.GetBuffer());
+
+                    Console.WriteLine("Creating character with name: " + displayNameInput.Text);
+                }
+                catch
+                {
+                    Console.WriteLine("Could not create character");
+                }
             }
         }
 

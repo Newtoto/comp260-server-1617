@@ -47,13 +47,13 @@
             this.loginPanel = new MetroFramework.Controls.MetroPanel();
             this.mudPanel = new MetroFramework.Controls.MetroPanel();
             this.playerSelectPanel = new MetroFramework.Controls.MetroPanel();
+            this.characterSelectErrors = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
             this.selectPlayer = new MetroFramework.Controls.MetroTile();
             this.createPlayer = new MetroFramework.Controls.MetroTile();
             this.availableCharacters = new System.Windows.Forms.ListBox();
             this.playerName = new MetroFramework.Controls.MetroLabel();
             this.displayNameInput = new MetroFramework.Controls.MetroTextBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.characterSelectErrors = new System.Windows.Forms.Label();
             this.loginPanel.SuspendLayout();
             this.mudPanel.SuspendLayout();
             this.playerSelectPanel.SuspendLayout();
@@ -295,7 +295,7 @@
             this.loginPanel.HorizontalScrollbarBarColor = true;
             this.loginPanel.HorizontalScrollbarHighlightOnWheel = false;
             this.loginPanel.HorizontalScrollbarSize = 10;
-            this.loginPanel.Location = new System.Drawing.Point(1, 58);
+            this.loginPanel.Location = new System.Drawing.Point(5, 58);
             this.loginPanel.Name = "loginPanel";
             this.loginPanel.Size = new System.Drawing.Size(333, 154);
             this.loginPanel.TabIndex = 13;
@@ -344,6 +344,25 @@
             this.playerSelectPanel.VerticalScrollbarBarColor = true;
             this.playerSelectPanel.VerticalScrollbarHighlightOnWheel = false;
             this.playerSelectPanel.VerticalScrollbarSize = 10;
+            // 
+            // characterSelectErrors
+            // 
+            this.characterSelectErrors.AutoSize = true;
+            this.characterSelectErrors.ForeColor = System.Drawing.Color.DarkRed;
+            this.characterSelectErrors.Location = new System.Drawing.Point(21, 191);
+            this.characterSelectErrors.Name = "characterSelectErrors";
+            this.characterSelectErrors.Size = new System.Drawing.Size(35, 13);
+            this.characterSelectErrors.TabIndex = 12;
+            this.characterSelectErrors.Text = "label2";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.ForeColor = System.Drawing.Color.DarkRed;
+            this.label1.Location = new System.Drawing.Point(14, 192);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(0, 13);
+            this.label1.TabIndex = 11;
             // 
             // selectPlayer
             // 
@@ -415,25 +434,6 @@
             this.displayNameInput.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
             this.displayNameInput.WaterMarkFont = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Pixel);
             this.displayNameInput.Click += new System.EventHandler(this.displayNameInput_Click);
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.ForeColor = System.Drawing.Color.DarkRed;
-            this.label1.Location = new System.Drawing.Point(14, 192);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(0, 13);
-            this.label1.TabIndex = 11;
-            // 
-            // characterSelectErrors
-            // 
-            this.characterSelectErrors.AutoSize = true;
-            this.characterSelectErrors.ForeColor = System.Drawing.Color.DarkRed;
-            this.characterSelectErrors.Location = new System.Drawing.Point(21, 191);
-            this.characterSelectErrors.Name = "characterSelectErrors";
-            this.characterSelectErrors.Size = new System.Drawing.Size(35, 13);
-            this.characterSelectErrors.TabIndex = 12;
-            this.characterSelectErrors.Text = "label2";
             // 
             // Mud
             // 

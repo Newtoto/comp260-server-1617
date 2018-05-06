@@ -373,11 +373,29 @@ namespace MUDClient
             }
         }
 
+        private string RemoveSpecialCharacters(string input)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (char c in input)
+            {
+                if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '.' || c == '_')
+                {
+                    sb.Append(c);
+                }
+            }
+            return sb.ToString();
+        }
+
         // Send text input to selected target
         private void sendButton_Click(object sender, EventArgs e)
         {
             if ((inputBox.Text.Length > 0) && (client != null))
             {
+                // Remove special characters from input
+                inputBox.Text = RemoveSpecialCharacters(inputBox.Text);
+
+                Console.WriteLine(inputBox.Text);
+
                 try
                 {
                     // Index of global chat

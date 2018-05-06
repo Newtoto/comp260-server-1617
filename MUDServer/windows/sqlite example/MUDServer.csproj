@@ -69,9 +69,6 @@
     <Compile Include="..\..\DungeonDBAccess.cs">
       <Link>DungeonDBAccess.cs</Link>
     </Compile>
-    <Compile Include="..\..\MessageManager.cs">
-      <Link>MessageManager.cs</Link>
-    </Compile>
     <Compile Include="..\..\MessageTypes.cs">
       <Link>MessageTypes.cs</Link>
     </Compile>

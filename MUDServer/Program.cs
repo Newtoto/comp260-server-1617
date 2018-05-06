@@ -30,7 +30,6 @@ namespace Server
     class Program
     {
         static SocketManager socketManager = new SocketManager();
-        static MessageManager messageManager = new MessageManager();
 
         static DatabaseController databaseController = new DatabaseController();
         static DungeonDBAccess dungeonDB = databaseController.dungeonDB;
@@ -39,6 +38,22 @@ namespace Server
 
 
         static int clientID = 1;
+
+        // Sends message to socket
+        static void SendMessageToSocket(Socket s, Msg message)
+        {
+            MemoryStream outStream = message.WriteData();
+
+            s.Send(outStream.GetBuffer());
+        }
+
+        // Sends private message to socket
+        static void SendPrivateMessageToSocket(Socket s, PrivateChatMsg message)
+        {
+            MemoryStream outStream = message.WriteData();
+
+            s.Send(outStream.GetBuffer());
+        }
 
         // Log in / sign up user process
         static List<String> SendLogInStateToUser(Socket s, String newTitle, String messageType, String loginSuccess, int userID)
@@ -92,7 +107,7 @@ namespace Server
                     // Create character in database
                     characterDB.CreateNewCharacter(characterName, userID);
 
-                    SendGlobalChatMessage(characterName + " has just rejoined the dungeon.");
+                    SendGlobalChatMessage(characterName + " has joined the dungeon, give them a warm welcome!");
                 }
 				// Allow previous message to go through
                 Thread.Sleep(500);
@@ -106,7 +121,7 @@ namespace Server
                 // Create and send room text
                 PublicChatMsg roomText = new PublicChatMsg();
                 roomText.msg = GetRoomTextFromCharacterName(characterName);
-                messageManager.SendMessageToSocket(s, roomText);
+                SendMessageToSocket(s, roomText);
             }
         }
 
@@ -210,7 +225,7 @@ namespace Server
 
             characterListMsg.characterList = characterDB.GetPlayerCharacters(playerID);
 
-            messageManager.SendMessageToSocket(s, characterListMsg);
+            SendMessageToSocket(s, characterListMsg);
         }
 
         // Send chat message to all users
@@ -452,12 +467,12 @@ namespace Server
                                             
 											// Send feedback to original sender
                                             privateMsg.msg = "You to " + privateMsg.destination + ": " + privateMsg.msg;
-                                            messageManager.SendMessageToSocket(chatClient, privateMsg);
+                                            SendMessageToSocket(chatClient, privateMsg);
 
                                             // Send message to target
                                             privateMsg.msg = "Private message from " + characterName + ": " + privateMsg.msg;
 
-                                            messageManager.SendMessageToSocket(targetSocket, privateMsg);
+                                            SendMessageToSocket(targetSocket, privateMsg);
                                             
 										}
                                         break;
@@ -487,7 +502,7 @@ namespace Server
 
                                                     // Create and send exit blocked message
                                                     serverResponse.msg = "You cannot go " + navigationMsg.msg + ".";
-                                                    messageManager.SendMessageToSocket(chatClient, serverResponse);
+                                                    SendMessageToSocket(chatClient, serverResponse);
 
                                                     // Allow failed navigation message to send
                                                     Thread.Sleep(500);
@@ -496,7 +511,7 @@ namespace Server
 
                                                 // Send room text to client
                                                 serverResponse.msg = GetRoomTextFromCharacterName(characterName);
-                                                messageManager.SendMessageToSocket(chatClient, serverResponse);
+                                                SendMessageToSocket(chatClient, serverResponse);
                                             }
                                         }
                                         break;
@@ -531,7 +546,7 @@ namespace Server
             Socket serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
             // Server IP 138.68.161.95, test 127.0.0.1
-			serverSocket.Bind(new IPEndPoint(IPAddress.Parse("138.68.161.95"), 8500));
+			serverSocket.Bind(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8500));
             serverSocket.Listen(32);
 
             bool bQuit = false;

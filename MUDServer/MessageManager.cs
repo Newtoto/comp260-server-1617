@@ -23,6 +23,7 @@ namespace Server
             s.Send(outStream.GetBuffer());
         }
 
+        // Sends private message to socket
         public void SendPrivateMessageToSocket(Socket s, PrivateChatMsg message)
         {
             MemoryStream outStream = message.WriteData();
